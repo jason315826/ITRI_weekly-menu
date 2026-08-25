@@ -15,12 +15,9 @@
     --plum: #2B1728;
     --gold: #C89A3C;
     --rose: #B85C6B;
-    --sage: #6E8C72;
     --line: rgba(43,29,34,0.12);
   }
-
   *{ box-sizing: border-box; }
-
   body{
     margin:0;
     background: var(--paper);
@@ -31,91 +28,47 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 56px 22px 90px; position: relative; }
 
-  .wrap{
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 56px 22px 90px;
-  }
-
-  /* ---------- Header ---------- */
-  header{
-    text-align: center;
-    margin-bottom: 52px;
-    animation: fadeUp .7s ease both;
-  }
-
-  .eyebrow{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
+  .admin-link{
+    position: absolute;
+    top: 22px;
+    right: 22px;
     font-size: 12px;
-    letter-spacing: 0.32em;
-    color: var(--rose);
-    margin-bottom: 16px;
-  }
-  .eyebrow::before, .eyebrow::after{
-    content:"";
-    width: 26px; height: 1px;
-    background: var(--rose);
-    opacity: .5;
-  }
-
-  h1{
-    font-family: 'Noto Serif TC', serif;
-    font-weight: 900;
-    font-size: clamp(38px, 6vw, 58px);
-    line-height: 1.15;
-    margin: 0 0 12px;
-    color: var(--plum);
-    letter-spacing: 0.02em;
-  }
-
-  .date-range{
-    font-size: 14px;
-    color: var(--ink);
-    opacity: .6;
     letter-spacing: 0.05em;
-  }
-
-  /* ---------- Legend ---------- */
-  .legend{
-    display: flex;
-    justify-content: center;
-    gap: 28px;
-    margin-top: 26px;
-    font-size: 13px;
     color: var(--ink);
-    opacity: .75;
+    opacity: .35;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    transition: opacity .2s ease, border-color .2s ease;
   }
+  .admin-link:hover{ opacity: .75; border-color: var(--gold); }
+
+  header{ text-align: center; margin-bottom: 52px; animation: fadeUp .7s ease both; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 12px; letter-spacing: 0.32em; color: var(--rose); margin-bottom: 16px;
+  }
+  .eyebrow::before, .eyebrow::after{ content:""; width: 26px; height: 1px; background: var(--rose); opacity: .5; }
+  h1{
+    font-family: 'Noto Serif TC', serif; font-weight: 900;
+    font-size: clamp(38px, 6vw, 58px); line-height: 1.15;
+    margin: 0 0 12px; color: var(--plum); letter-spacing: 0.02em;
+  }
+  .date-range{ font-size: 14px; color: var(--ink); opacity: .6; letter-spacing: 0.05em; }
+  .legend{ display: flex; justify-content: center; gap: 28px; margin-top: 26px; font-size: 13px; color: var(--ink); opacity: .75; }
   .legend span{ display:flex; align-items:center; gap:6px; }
   .legend svg{ width:16px; height:16px; }
-
-  /* ---------- Day deck ---------- */
-  .deck{
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0;
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
-  }
-
+  .deck{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .day-card{
-    position: relative;
-    background: var(--paper);
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 30px 20px 34px;
-    animation: fadeUp .7s ease both;
-    transition: background .25s ease;
+    position: relative; background: var(--paper);
+    border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    padding: 30px 20px 34px; animation: fadeUp .7s ease both; transition: background .25s ease;
   }
-
   .day-card:hover{ background: var(--paper-soft); }
-
-  .day-card.is-today{
-    background: var(--plum);
-    color: var(--paper);
-  }
+  .day-card.is-today{ background: var(--plum); color: var(--paper); }
   .day-card.is-today .num{ color: var(--gold); }
   .day-card.is-today .day-name{ color: var(--paper); }
   .day-card.is-today .day-date{ color: rgba(251,246,238,0.6); }
@@ -123,105 +76,30 @@
   .day-card.is-today .divider{ background: rgba(251,246,238,0.18); }
   .day-card.is-today .icon{ color: var(--gold); }
   .day-card.is-today::before{
-    content: "今日";
-    position: absolute;
-    top: 14px; right: 16px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    border: 1px solid rgba(200,154,60,0.5);
-    border-radius: 999px;
-    padding: 2px 10px;
+    content: "今日"; position: absolute; top: 14px; right: 16px;
+    font-size: 11px; letter-spacing: 0.1em; color: var(--gold);
+    border: 1px solid rgba(200,154,60,0.5); border-radius: 999px; padding: 2px 10px;
   }
-
-  .num{
-    font-family: 'Noto Serif TC', serif;
-    font-size: 15px;
-    color: var(--rose);
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
-  }
-
-  .day-name{
-    font-family: 'Noto Serif TC', serif;
-    font-weight: 700;
-    font-size: 26px;
-    color: var(--plum);
-    margin-bottom: 2px;
-  }
-
-  .day-date{
-    font-size: 12px;
-    color: var(--ink);
-    opacity: .5;
-    margin-bottom: 22px;
-  }
-
-  .divider{
-    width: 100%;
-    height: 1px;
-    background: var(--line);
-    margin: 18px 0;
-  }
-
-  .item{
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 4px;
-  }
-
-  .icon{
-    flex: 0 0 auto;
-    width: 20px; height: 20px;
-    color: var(--gold);
-    margin-top: 2px;
-  }
-
+  .num{ font-family: 'Noto Serif TC', serif; font-size: 15px; color: var(--rose); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .day-name{ font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 26px; color: var(--plum); margin-bottom: 2px; }
+  .day-date{ font-size: 12px; color: var(--ink); opacity: .5; margin-bottom: 22px; }
+  .divider{ width: 100%; height: 1px; background: var(--line); margin: 18px 0; }
+  .item{ display: flex; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+  .icon{ flex: 0 0 auto; width: 20px; height: 20px; color: var(--gold); margin-top: 2px; }
   .item-body{ flex: 1; }
-
-  .item-label{
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    color: var(--ink);
-    opacity: .45;
-    margin-bottom: 2px;
-  }
-
-  .item-value{
-    font-size: 15.5px;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-
-  /* ---------- Footer ---------- */
-  footer{
-    margin-top: 60px;
-    text-align: center;
-    color: var(--ink);
-    opacity: .55;
-    font-size: 13px;
-    line-height: 1.9;
-  }
-
-  @keyframes fadeUp{
-    from{ opacity: 0; transform: translateY(8px); }
-    to{ opacity: 1; transform: translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{ animation: none !important; transition: none !important; }
-  }
-
+  .item-label{ font-size: 11px; letter-spacing: 0.08em; color: var(--ink); opacity: .45; margin-bottom: 2px; }
+  .item-value{ font-size: 15.5px; font-weight: 500; line-height: 1.4; }
+  footer{ margin-top: 60px; text-align: center; color: var(--ink); opacity: .55; font-size: 13px; line-height: 1.9; }
+  .loading{ text-align:center; padding: 60px 0; opacity:.5; font-size:14px; }
+  @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
   :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 860px){
-    .deck{ grid-template-columns: repeat(2, 1fr); border-left: 1px solid var(--line); }
-  }
+  @media (max-width: 860px){ .deck{ grid-template-columns: repeat(2, 1fr); border-left: 1px solid var(--line); } }
   @media (max-width: 520px){
     .deck{ grid-template-columns: 1fr; }
     .legend{ flex-direction: column; align-items: center; gap: 10px; }
+    .admin-link{ position: static; display: inline-block; margin-bottom: 20px; }
+    .wrap{ padding-top: 40px; }
   }
 </style>
 </head>
@@ -242,11 +120,12 @@
 </svg>
 
 <div class="wrap">
+  <a class="admin-link" href="admin.html">後台管理</a>
 
   <header>
     <div class="eyebrow">LUNCH &amp; TEA TIME</div>
     <h1>大家一起來呷奔</h1>
-    <div class="date-range">8 月 24 日（一）— 8 月 28 日（五）</div>
+    <div class="date-range" id="dateRange">載入中…</div>
     <div class="legend">
       <span><svg class="icon"><use href="#icon-bowl"/></svg>中餐</span>
       <span><svg class="icon"><use href="#icon-cup"/></svg>下午茶飲料</span>
@@ -254,127 +133,51 @@
   </header>
 
   <div class="deck" id="deck">
-
-    <div class="day-card" data-day="1">
-      <div class="num">壹</div>
-      <div class="day-name">週一</div>
-      <div class="day-date">08.24</div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-bowl"/></svg>
-        <div class="item-body">
-          <div class="item-label">中餐</div>
-          <div class="item-value">竹美港式燒臘</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-cup"/></svg>
-        <div class="item-body">
-          <div class="item-label">下午茶</div>
-          <div class="item-value">沐飲</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="day-card" data-day="2">
-      <div class="num">貳</div>
-      <div class="day-name">週二</div>
-      <div class="day-date">08.25</div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-bowl"/></svg>
-        <div class="item-body">
-          <div class="item-label">中餐</div>
-          <div class="item-value">吳家甜不辣</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-cup"/></svg>
-        <div class="item-body">
-          <div class="item-label">下午茶</div>
-          <div class="item-value">罪惡雞排</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="day-card" data-day="3">
-      <div class="num">參</div>
-      <div class="day-name">週三</div>
-      <div class="day-date">08.26</div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-bowl"/></svg>
-        <div class="item-body">
-          <div class="item-label">中餐</div>
-          <div class="item-value">游麵館</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-cup"/></svg>
-        <div class="item-body">
-          <div class="item-label">下午茶</div>
-          <div class="item-value">無</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="day-card" data-day="4">
-      <div class="num">肆</div>
-      <div class="day-name">週四</div>
-      <div class="day-date">08.27</div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-bowl"/></svg>
-        <div class="item-body">
-          <div class="item-label">中餐</div>
-          <div class="item-value">三顧茅廬 新竹光復店</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-cup"/></svg>
-        <div class="item-body">
-          <div class="item-label">下午茶</div>
-          <div class="item-value">無</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="day-card" data-day="5">
-      <div class="num">伍</div>
-      <div class="day-name">週五</div>
-      <div class="day-date">08.28</div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-bowl"/></svg>
-        <div class="item-body">
-          <div class="item-label">中餐</div>
-          <div class="item-value">竹美港式燒臘港</div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="item">
-        <svg class="icon"><use href="#icon-cup"/></svg>
-        <div class="item-body">
-          <div class="item-label">下午茶</div>
-          <div class="item-value">無</div>
-        </div>
-      </div>
-    </div>
-
+    <div class="loading">菜單載入中…</div>
   </div>
 
   <footer>
-	提醒：(一)、當日菜單請以群組為主。(二)、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。
+    (一)、當日菜單請以群組為主。<br>
+    (二)、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。
   </footer>
-
 </div>
 
 <script>
-  const todayIndex = new Date().getDay(); // 0=週日 ... 6=週六
-  document.querySelectorAll('.day-card').forEach(card => {
-    if (parseInt(card.dataset.day, 10) === todayIndex) {
-      card.classList.add('is-today');
+  async function loadMenu(){
+    try{
+      const res = await fetch('menu.json?_=' + Date.now());
+      const data = await res.json();
+      document.getElementById('dateRange').textContent = data.range;
+
+      const todayIndex = new Date().getDay();
+      const deck = document.getElementById('deck');
+      deck.innerHTML = data.days.map(d => `
+        <div class="day-card${d.dayIndex === todayIndex ? ' is-today' : ''}">
+          <div class="num">${d.num}</div>
+          <div class="day-name">${d.name}</div>
+          <div class="day-date">${d.date}</div>
+          <div class="item">
+            <svg class="icon"><use href="#icon-bowl"/></svg>
+            <div class="item-body">
+              <div class="item-label">中餐</div>
+              <div class="item-value">${d.lunch}</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="item">
+            <svg class="icon"><use href="#icon-cup"/></svg>
+            <div class="item-body">
+              <div class="item-label">下午茶</div>
+              <div class="item-value">${d.drink}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }catch(err){
+      document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗,請稍後再試</div>';
     }
-  });
+  }
+  loadMenu();
 </script>
 
 </body>

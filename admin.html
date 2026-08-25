@@ -78,8 +78,8 @@
 
   <!-- 步驟 1：密碼登入 -->
   <div class="panel" id="loginPanel">
-    <label for="pw">管理員密碼</label>
-    <input type="password" id="pw" placeholder="請輸入密碼">
+    <label for="pw">密碼</label>
+    <input type="password" id="pw" placeholder="請輸入管理員密碼">
     <button class="btn-primary" id="loginBtn">登入</button>
     <div class="msg err" id="loginMsg"></div>
   </div>
@@ -103,7 +103,7 @@
   <div class="panel hidden" id="editPanel">
     <label for="weekStart">本週「週一」的日期</label>
     <input type="date" id="weekStart">
-    <div class="hint">只要選週一的日期,週二到週五會自動算出來,「週一～週五」的星期名稱不會變動。</div>
+    <div class="hint">選擇本週「週一」的日期系統將自動計算並顯示正確日期。</div>
 
     <div id="daysContainer"></div>
 
@@ -112,7 +112,7 @@
 
     <label for="orderLink">訂餐系統按鈕連結</label>
     <input type="url" id="orderLink" placeholder="https://...">
-    <div class="hint">填了才會在網站右下角顯示浮動按鈕,可以連到訂餐表單或群組連結。留空就不顯示。</div>
+    <div class="hint">此按鈕可以連動到揪團系統。</div>
 
     <div class="row">
       <button class="btn-primary" id="saveBtn">儲存並發布</button>

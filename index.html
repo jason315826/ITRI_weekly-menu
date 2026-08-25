@@ -80,15 +80,17 @@
     font-size: 11px; letter-spacing: 0.1em; color: var(--gold);
     border: 1px solid rgba(200,154,60,0.5); border-radius: 999px; padding: 2px 10px;
   }
-  .num{ font-family: 'Noto Serif TC', serif; font-size: 15px; color: var(--rose); letter-spacing: 0.1em; margin-bottom: 6px; }
-  .day-name{ font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 26px; color: var(--plum); margin-bottom: 2px; }
-  .day-date{ font-size: 12px; color: var(--ink); opacity: .5; margin-bottom: 22px; }
-  .divider{ width: 100%; height: 1px; background: var(--line); margin: 18px 0; }
-  .item{ display: flex; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
-  .icon{ flex: 0 0 auto; width: 20px; height: 20px; color: var(--gold); margin-top: 2px; }
+  .num{ font-family: 'Noto Serif TC', serif; font-size: 16px; color: var(--rose); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .day-name{ font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 28px; color: var(--plum); margin-bottom: 2px; }
+  .day-date{ font-size: 13px; color: var(--ink); opacity: .55; margin-bottom: 24px; }
+  .divider{ width: 100%; height: 1px; background: var(--line); margin: 20px 0; }
+  .item{ display: flex; align-items: flex-start; gap: 11px; margin-bottom: 4px; }
+  .icon{ flex: 0 0 auto; width: 22px; height: 22px; color: var(--gold); margin-top: 3px; }
   .item-body{ flex: 1; }
-  .item-label{ font-size: 11px; letter-spacing: 0.08em; color: var(--ink); opacity: .45; margin-bottom: 2px; }
-  .item-value{ font-size: 15.5px; font-weight: 500; line-height: 1.4; }
+  .item-label{ font-size: 11.5px; letter-spacing: 0.08em; color: var(--rose); opacity: .8; margin-bottom: 4px; font-weight: 700; }
+  .item-value{ font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum); }
+  .day-card.is-today .item-value{ color: var(--paper); }
+  .day-card.is-today .item-label{ color: var(--gold); opacity: 1; }
   footer{ margin-top: 60px; text-align: center; color: var(--ink); opacity: .55; font-size: 13px; line-height: 1.9; }
   .loading{ text-align:center; padding: 60px 0; opacity:.5; font-size:14px; }
   @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }

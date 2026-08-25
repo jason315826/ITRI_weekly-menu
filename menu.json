@@ -1,10 +1,10 @@
 {
-  "weekStart": "2026-08-31",
+  "weekStart": "2026-08-24",
   "notes": [
     "（一）、當日菜單請以群組為主。",
     "（二）、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。"
   ],
-  "lastUpdated": "2026-08-25T10:59:22.602Z",
+  "lastUpdated": "2026-08-25T11:02:35.229Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
@@ -21,19 +21,19 @@
     },
     {
       "lunch": "游麵館",
-      "lunchLink": "",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260825-8OXVNU",
       "drink": "無",
       "drinkLink": ""
     },
     {
       "lunch": "三顧茅廬",
-      "lunchLink": "",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260825-7P4Z0I",
       "drink": "無",
       "drinkLink": ""
     },
     {
       "lunch": "竹美港式燒臘",
-      "lunchLink": "",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260825-QCMM5P",
       "drink": "無",
       "drinkLink": ""
     }

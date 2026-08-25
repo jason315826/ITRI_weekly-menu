@@ -61,7 +61,7 @@
   .legend{ display: flex; justify-content: center; gap: 28px; margin-top: 26px; font-size: 13px; color: var(--ink); opacity: .75; }
   .legend span{ display:flex; align-items:center; gap:6px; }
   .legend svg{ width:16px; height:16px; }
-  .deck{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .deck{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .day-card{
     position: relative; background: var(--paper);
     border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
@@ -88,7 +88,7 @@
   .icon{ flex: 0 0 auto; width: 22px; height: 22px; color: var(--gold); margin-top: 3px; }
   .item-body{ flex: 1; }
   .item-label{ font-size: 11.5px; letter-spacing: 0.08em; color: var(--rose); opacity: .8; margin-bottom: 4px; font-weight: 700; }
-  .item-value{ font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum); }
+  .item-value{ font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum); overflow-wrap: break-word; word-break: break-word; }
   .day-card.is-today .item-value{ color: var(--paper); }
   .day-card.is-today .item-label{ color: var(--gold); opacity: 1; }
   footer{ margin-top: 60px; text-align: center; color: var(--ink); opacity: .55; font-size: 13px; line-height: 1.9; }
@@ -96,7 +96,7 @@
   @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
   :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
-  @media (max-width: 860px){ .deck{ grid-template-columns: repeat(2, 1fr); border-left: 1px solid var(--line); } }
+  @media (max-width: 860px){ .deck{ grid-template-columns: repeat(2, minmax(0, 1fr)); border-left: 1px solid var(--line); } }
   @media (max-width: 520px){
     .deck{ grid-template-columns: 1fr; }
     .legend{ flex-direction: column; align-items: center; gap: 10px; }

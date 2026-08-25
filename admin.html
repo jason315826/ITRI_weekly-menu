@@ -17,7 +17,14 @@
     margin:0; background: var(--paper); color: var(--ink);
     font-family: 'Noto Sans TC', sans-serif; min-height: 100vh;
   }
-  .wrap{ max-width: 640px; margin: 0 auto; padding: 60px 20px 100px; }
+  .wrap{ max-width: 640px; margin: 0 auto; padding: 60px 20px 100px; position: relative; }
+  .home-link{
+    position: absolute; top: 22px; right: 22px;
+    font-size: 12px; letter-spacing: 0.05em; color: var(--ink); opacity: .4;
+    text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; transition: opacity .2s ease, border-color .2s ease;
+  }
+  .home-link:hover{ opacity: .8; border-color: var(--gold); }
   h1{
     font-family: 'Noto Serif TC', serif; font-weight: 900;
     font-size: 30px; color: var(--plum); margin: 0 0 8px; text-align:center;
@@ -73,6 +80,7 @@
 <body>
 
 <div class="wrap">
+  <a class="home-link" href="index.html">回首頁</a>
   <h1>後台管理</h1>
   <div class="sub">呷奔｜一週菜單專用系統</div>
 
@@ -104,6 +112,8 @@
     <label for="weekStart">本週「週一」的日期</label>
     <input type="date" id="weekStart">
     <div class="hint">選擇本週「週一」的日期系統將自動計算並顯示正確日期。</div>
+
+    <button type="button" class="btn-secondary" id="clearAllBtn" style="margin-top:16px">清除全部品項</button>
 
     <div id="daysContainer"></div>
 
@@ -227,9 +237,22 @@
         <input type="text" data-idx="${i}" data-field="drink" value="${(d.drink||'').replace(/"/g,'&quot;')}">
         <label class="sub-field">飲料超連結（選填）</label>
         <input type="url" data-idx="${i}" data-field="drinkLink" value="${(d.drinkLink||'').replace(/"/g,'&quot;')}" placeholder="https://...">
+
+        <button type="button" class="btn-secondary day-clear-btn" data-clear-idx="${i}" style="margin-top:14px">清除本日品項</button>
       </div>
     `).join('');
     renderDayPreviewDates(data.weekStart);
+
+    document.querySelectorAll('.day-clear-btn').forEach(btn => {
+      btn.onclick = () => {
+        const i = btn.dataset.clearIdx;
+        if (!confirm(`確定要清除${DAY_NAMES[i]}的中餐與下午茶品項嗎？`)) return;
+        ['lunch','lunchLink','drink','drinkLink'].forEach(field => {
+          const input = document.querySelector(`[data-idx="${i}"][data-field="${field}"]`);
+          if (input) input.value = '';
+        });
+      };
+    });
   }
 
   function renderDayPreviewDates(weekStart){
@@ -237,9 +260,16 @@
     for (let i = 0; i < 5; i++){
       const dt = addDays(weekStart, i);
       const el = document.querySelector(`[data-preview="${i}"]`);
-      if (el) el.textContent = `${pad2(dt.getMonth()+1)}.${pad2(dt.getDate())}`;
+      if (el) el.textContent = `${pad2(dt.getMonth()+1)}/${pad2(dt.getDate())}`;
     }
   }
+
+  document.getElementById('clearAllBtn').onclick = () => {
+    if (!confirm('確定要清除全部 5 天的中餐與下午茶品項嗎？')) return;
+    document.querySelectorAll('#daysContainer input[data-field]').forEach(input => {
+      input.value = '';
+    });
+  };
 
   document.getElementById('weekStart').addEventListener('change', (e) => {
     renderDayPreviewDates(e.target.value);

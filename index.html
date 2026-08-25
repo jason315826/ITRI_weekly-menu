@@ -28,21 +28,13 @@
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
-  .wrap{ max-width: 1180px; margin: 0 auto; padding: 56px 22px 90px; position: relative; }
+  .wrap{ max-width: 1180px; margin: 0 auto; padding: 56px 22px 60px; position: relative; }
 
   .admin-link{
-    position: absolute;
-    top: 22px;
-    right: 22px;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    color: var(--ink);
-    opacity: .35;
-    text-decoration: none;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 5px 12px;
-    transition: opacity .2s ease, border-color .2s ease;
+    position: absolute; top: 22px; right: 22px;
+    font-size: 12px; letter-spacing: 0.05em; color: var(--ink); opacity: .35;
+    text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; transition: opacity .2s ease, border-color .2s ease;
   }
   .admin-link:hover{ opacity: .75; border-color: var(--gold); }
 
@@ -61,6 +53,7 @@
   .legend{ display: flex; justify-content: center; gap: 28px; margin-top: 26px; font-size: 13px; color: var(--ink); opacity: .75; }
   .legend span{ display:flex; align-items:center; gap:6px; }
   .legend svg{ width:16px; height:16px; }
+
   .deck{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .day-card{
     position: relative; background: var(--paper);
@@ -72,7 +65,8 @@
   .day-card.is-today .num{ color: var(--gold); }
   .day-card.is-today .day-name{ color: var(--paper); }
   .day-card.is-today .day-date{ color: rgba(251,246,238,0.6); }
-  .day-card.is-today .item-label{ color: rgba(251,246,238,0.55); }
+  .day-card.is-today .item-label{ color: var(--gold); opacity: 1; }
+  .day-card.is-today .item-value{ color: var(--paper); }
   .day-card.is-today .divider{ background: rgba(251,246,238,0.18); }
   .day-card.is-today .icon{ color: var(--gold); }
   .day-card.is-today::before{
@@ -80,18 +74,75 @@
     font-size: 11px; letter-spacing: 0.1em; color: var(--gold);
     border: 1px solid rgba(200,154,60,0.5); border-radius: 999px; padding: 2px 10px;
   }
+
   .num{ font-family: 'Noto Serif TC', serif; font-size: 16px; color: var(--rose); letter-spacing: 0.1em; margin-bottom: 6px; }
   .day-name{ font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 28px; color: var(--plum); margin-bottom: 2px; }
   .day-date{ font-size: 13px; color: var(--ink); opacity: .55; margin-bottom: 24px; }
   .divider{ width: 100%; height: 1px; background: var(--line); margin: 20px 0; }
   .item{ display: flex; align-items: flex-start; gap: 11px; margin-bottom: 4px; }
   .icon{ flex: 0 0 auto; width: 22px; height: 22px; color: var(--gold); margin-top: 3px; }
-  .item-body{ flex: 1; }
+  .item-body{ flex: 1; min-width: 0; }
   .item-label{ font-size: 11.5px; letter-spacing: 0.08em; color: var(--rose); opacity: .8; margin-bottom: 4px; font-weight: 700; }
-  .item-value{ font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum); overflow-wrap: break-word; word-break: break-word; }
-  .day-card.is-today .item-value{ color: var(--paper); }
-  .day-card.is-today .item-label{ color: var(--gold); opacity: 1; }
-  footer{ margin-top: 60px; text-align: center; color: var(--ink); opacity: .55; font-size: 13px; line-height: 1.9; }
+  .item-value{
+    font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum);
+    overflow-wrap: break-word; word-break: break-word;
+    display: inline-block; text-decoration: none;
+  }
+  a.item-value.linked{
+    border-bottom: 2px dashed var(--gold);
+    transition: color .2s ease, border-color .2s ease;
+  }
+  a.item-value.linked:hover{ color: var(--rose); border-color: var(--rose); }
+  .day-card.is-today a.item-value.linked{ border-color: var(--gold); }
+  .day-card.is-today a.item-value.linked:hover{ color: var(--gold); }
+  .link-icon{ width: 13px; height: 13px; margin-left: 4px; vertical-align: 2px; opacity: .7; }
+
+  /* ---------- Notes block ---------- */
+  .notes{
+    margin-top: 40px;
+    background: var(--paper-soft);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--gold);
+    border-radius: 10px;
+    padding: 24px 28px;
+  }
+  .notes-title{
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--plum);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+  .notes ul{ margin: 0; padding: 0; list-style: none; }
+  .notes li{
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .footer-meta{
+    margin-top: 22px;
+    text-align: right;
+    font-size: 12.5px;
+    color: var(--ink);
+    opacity: .45;
+  }
+
+  .order-fab{
+    position: fixed; right: 20px; bottom: 20px;
+    background: var(--plum); color: var(--paper);
+    padding: 14px 22px; border-radius: 999px;
+    font-size: 14px; font-weight: 700; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 10px 24px rgba(43,23,40,0.32);
+    transition: transform .2s ease, box-shadow .2s ease;
+    z-index: 50;
+  }
+  .order-fab:hover{ transform: translateY(-3px); box-shadow: 0 14px 30px rgba(43,23,40,0.4); }
+  .order-fab svg{ width: 17px; height: 17px; }
+
   .loading{ text-align:center; padding: 60px 0; opacity:.5; font-size:14px; }
   @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
@@ -101,7 +152,9 @@
     .deck{ grid-template-columns: 1fr; }
     .legend{ flex-direction: column; align-items: center; gap: 10px; }
     .admin-link{ position: static; display: inline-block; margin-bottom: 20px; }
-    .wrap{ padding-top: 40px; }
+    .wrap{ padding-top: 40px; padding-bottom: 100px; }
+    .footer-meta{ text-align: center; }
+    .order-fab{ right: 16px; bottom: 16px; padding: 12px 18px; font-size: 13px; }
   }
 </style>
 </head>
@@ -118,6 +171,13 @@
     <path d="M5 8h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/>
     <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/>
     <path d="M8 5c.5-1 .2-1.5-.3-2M12 5c.5-1 .2-1.5-.3-2"/>
+  </symbol>
+  <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/>
+    <path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>
+  </symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+    <path d="M12 5v14M5 12h14"/>
   </symbol>
 </svg>
 
@@ -138,31 +198,82 @@
     <div class="loading">菜單載入中…</div>
   </div>
 
-  <footer>
-    (一)、當日菜單請以群組為主。<br>
-    (二)、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。
-  </footer>
+  <div class="notes" id="notesBlock" style="display:none">
+    <div class="notes-title">備註</div>
+    <ul id="notesList"></ul>
+  </div>
+
+  <div class="footer-meta" id="footerMeta"></div>
 </div>
 
+<a class="order-fab" id="orderFab" style="display:none" target="_blank" rel="noopener">
+  <svg><use href="#icon-plus"/></svg>
+  新增菜單
+</a>
+
 <script>
+  const DAY_META = [
+    { num: '壹', name: '週一' },
+    { num: '貳', name: '週二' },
+    { num: '參', name: '週三' },
+    { num: '肆', name: '週四' },
+    { num: '伍', name: '週五' }
+  ];
+
+  function pad2(n){ return String(n).padStart(2, '0'); }
+
+  function addDays(dateStr, n){
+    const d = new Date(dateStr + 'T00:00:00');
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+
+  function isSameDate(a, b){
+    return a.getFullYear() === b.getFullYear() &&
+           a.getMonth() === b.getMonth() &&
+           a.getDate() === b.getDate();
+  }
+
+  function formatLastUpdated(iso){
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())} 更新`;
+  }
+
+  function itemValueHtml(text, link){
+    const safeText = text || '';
+    if (link && link.trim()){
+      return `<a class="item-value linked" href="${link}" target="_blank" rel="noopener">${safeText}<svg class="link-icon"><use href="#icon-link"/></svg></a>`;
+    }
+    return `<span class="item-value">${safeText}</span>`;
+  }
+
   async function loadMenu(){
     try{
       const res = await fetch('menu.json?_=' + Date.now());
       const data = await res.json();
-      document.getElementById('dateRange').textContent = data.range;
+      const today = new Date();
 
-      const todayIndex = new Date().getDay();
+      const dates = [0,1,2,3,4].map(i => addDays(data.weekStart, i));
+      const mon = dates[0], fri = dates[4];
+      document.getElementById('dateRange').textContent =
+        `${mon.getMonth()+1} 月 ${mon.getDate()} 日（一）— ${fri.getMonth()+1} 月 ${fri.getDate()} 日（五）`;
+
       const deck = document.getElementById('deck');
-      deck.innerHTML = data.days.map(d => `
-        <div class="day-card${d.dayIndex === todayIndex ? ' is-today' : ''}">
-          <div class="num">${d.num}</div>
-          <div class="day-name">${d.name}</div>
-          <div class="day-date">${d.date}</div>
+      deck.innerHTML = data.days.map((d, i) => {
+        const dt = dates[i];
+        const meta = DAY_META[i];
+        const isToday = isSameDate(dt, today);
+        return `
+        <div class="day-card${isToday ? ' is-today' : ''}">
+          <div class="num">${meta.num}</div>
+          <div class="day-name">${meta.name}</div>
+          <div class="day-date">${pad2(dt.getMonth()+1)}.${pad2(dt.getDate())}</div>
           <div class="item">
             <svg class="icon"><use href="#icon-bowl"/></svg>
             <div class="item-body">
               <div class="item-label">中餐</div>
-              <div class="item-value">${d.lunch}</div>
+              ${itemValueHtml(d.lunch, d.lunchLink)}
             </div>
           </div>
           <div class="divider"></div>
@@ -170,11 +281,27 @@
             <svg class="icon"><use href="#icon-cup"/></svg>
             <div class="item-body">
               <div class="item-label">下午茶</div>
-              <div class="item-value">${d.drink}</div>
+              ${itemValueHtml(d.drink, d.drinkLink)}
             </div>
           </div>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
+
+      if (data.notes && data.notes.length){
+        document.getElementById('notesList').innerHTML =
+          data.notes.map(n => `<li>${n}</li>`).join('');
+        document.getElementById('notesBlock').style.display = 'block';
+      }
+
+      if (data.lastUpdated){
+        document.getElementById('footerMeta').textContent = '最後更新：' + formatLastUpdated(data.lastUpdated);
+      }
+
+      if (data.orderLink && data.orderLink.trim()){
+        const fab = document.getElementById('orderFab');
+        fab.href = data.orderLink;
+        fab.style.display = 'inline-flex';
+      }
     }catch(err){
       document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗,請稍後再試</div>';
     }

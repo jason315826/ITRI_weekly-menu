@@ -1,45 +1,20 @@
 {
-  "range": "8 月 24 日（一）— 8 月 28 日（五）",
+  "weekStart": "2026-08-25",
+  "notes": [
+    "（一）、當日菜單請以群組為主。",
+    "（二）、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。"
+  ],
+  "lastUpdated": "2026-08-25T09:00:00+08:00",
+  "orderLink": "",
+  "presets": {
+    "lunch": ["竹美港式燒臘", "吳家甜不辣", "游麵館", "三顧茅廬 新竹光復店"],
+    "drink": ["沐飲", "罪惡雞排", "無"]
+  },
   "days": [
-    {
-      "num": "壹",
-      "name": "週一",
-      "date": "08.24",
-      "dayIndex": 1,
-      "lunch": "竹美港式燒臘",
-      "drink": "沐飲"
-    },
-    {
-      "num": "貳",
-      "name": "週二",
-      "date": "08.25",
-      "dayIndex": 2,
-      "lunch": "吳家甜不辣",
-      "drink": "罪惡雞排"
-    },
-    {
-      "num": "參",
-      "name": "週三",
-      "date": "08.26",
-      "dayIndex": 3,
-      "lunch": "游麵館",
-      "drink": "無"
-    },
-    {
-      "num": "肆",
-      "name": "週四",
-      "date": "08.27",
-      "dayIndex": 4,
-      "lunch": "三顧茅廬",
-      "drink": "無"
-    },
-    {
-      "num": "伍",
-      "name": "週五",
-      "date": "08.28",
-      "dayIndex": 5,
-      "lunch": "竹美港式燒臘",
-      "drink": "無"
-    }
+    { "lunch": "竹美港式燒臘", "lunchLink": "", "drink": "沐飲", "drinkLink": "" },
+    { "lunch": "吳家甜不辣", "lunchLink": "", "drink": "罪惡雞排", "drinkLink": "" },
+    { "lunch": "游麵館", "lunchLink": "", "drink": "無", "drinkLink": "" },
+    { "lunch": "三顧茅廬 新竹光復店", "lunchLink": "", "drink": "無", "drinkLink": "" },
+    { "lunch": "竹美港式燒臘港", "lunchLink": "", "drink": "無", "drinkLink": "" }
   ]
 }

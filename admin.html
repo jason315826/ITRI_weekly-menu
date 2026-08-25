@@ -189,7 +189,8 @@
     container.innerHTML = data.days.map((d, i) => `
       <div class="day-block">
         <div class="day-title">${d.name}</div>
-        <div class="day-date">${d.date}</div>
+        <label>日期</label>
+        <input type="text" data-idx="${i}" data-field="date" value="${d.date.replace(/"/g,'&quot;')}">
         <label>中餐</label>
         <input type="text" data-idx="${i}" data-field="lunch" value="${d.lunch.replace(/"/g,'&quot;')}">
         <label>下午茶飲料</label>

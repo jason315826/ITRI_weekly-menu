@@ -3,204 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>本週菜單｜週一至週日</title>
+<title>本週午間菜單｜週一至週五</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #1E2A20;
-    --bg-card: #24321F;
-    --bg-card-hi: #2C3D26;
-    --chalk: #F3EEDC;
-    --chalk-dim: #C9C4AE;
-    --yolk: #E7A33E;
-    --stamp-red: #C1443C;
-    --line: rgba(243,238,220,0.22);
+    --ink: #2B1D22;
+    --paper: #FBF6EE;
+    --paper-soft: #F3ECDF;
+    --plum: #2B1728;
+    --gold: #C89A3C;
+    --rose: #B85C6B;
+    --sage: #6E8C72;
+    --line: rgba(43,29,34,0.12);
   }
 
   *{ box-sizing: border-box; }
 
-  html{ scroll-behavior: smooth; }
-
   body{
     margin:0;
-    background: var(--bg);
-    background-image:
-      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.025) 0, transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(255,255,255,0.02) 0, transparent 45%);
-    color: var(--chalk);
+    background: var(--paper);
+    background-image: radial-gradient(circle at 10% 0%, rgba(200,154,60,0.07), transparent 40%),
+                       radial-gradient(circle at 95% 100%, rgba(184,92,107,0.06), transparent 40%);
+    color: var(--ink);
     font-family: 'Noto Sans TC', sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
 
   .wrap{
-    max-width: 1100px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 48px 20px 80px;
+    padding: 56px 22px 90px;
   }
 
   /* ---------- Header ---------- */
   header{
     text-align: center;
-    margin-bottom: 44px;
+    margin-bottom: 52px;
     animation: fadeUp .7s ease both;
   }
 
   .eyebrow{
-    display:inline-block;
-    font-size: 13px;
-    letter-spacing: 0.28em;
-    color: var(--yolk);
-    border: 1px solid rgba(231,163,62,0.4);
-    padding: 5px 14px;
-    border-radius: 999px;
-    margin-bottom: 18px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: var(--rose);
+    margin-bottom: 16px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:"";
+    width: 26px; height: 1px;
+    background: var(--rose);
+    opacity: .5;
   }
 
   h1{
-    font-family: 'Zhi Mang Xing', cursive;
-    font-weight: 400;
-    font-size: clamp(52px, 9vw, 88px);
-    line-height: 1;
-    margin: 0 0 10px;
-    color: var(--chalk);
-    text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 900;
+    font-size: clamp(38px, 6vw, 58px);
+    line-height: 1.15;
+    margin: 0 0 12px;
+    color: var(--plum);
+    letter-spacing: 0.02em;
   }
 
   .date-range{
-    font-size: 15px;
-    color: var(--chalk-dim);
-    letter-spacing: 0.04em;
+    font-size: 14px;
+    color: var(--ink);
+    opacity: .6;
+    letter-spacing: 0.05em;
   }
 
-  .chalk-rule{
-    width: 140px;
-    height: 2px;
-    margin: 22px auto 0;
-    background: repeating-linear-gradient(90deg, var(--yolk) 0 10px, transparent 10px 16px);
-    opacity: 0.8;
+  /* ---------- Legend ---------- */
+  .legend{
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 26px;
+    font-size: 13px;
+    color: var(--ink);
+    opacity: .75;
   }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .legend svg{ width:16px; height:16px; }
 
   /* ---------- Day deck ---------- */
   .deck{
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
   }
 
   .day-card{
     position: relative;
-    background: var(--bg-card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 22px 20px 24px;
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 30px 20px 34px;
     animation: fadeUp .7s ease both;
-    transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    transition: background .25s ease;
   }
 
-  .day-card:hover{
-    transform: translateY(-4px) rotate(-0.3deg);
-    background: var(--bg-card-hi);
-    border-color: rgba(231,163,62,0.4);
-  }
+  .day-card:hover{ background: var(--paper-soft); }
 
   .day-card.is-today{
-    border-color: var(--yolk);
-    box-shadow: 0 0 0 1px rgba(231,163,62,0.25), 0 12px 28px rgba(0,0,0,0.35);
+    background: var(--plum);
+    color: var(--paper);
+  }
+  .day-card.is-today .num{ color: var(--gold); }
+  .day-card.is-today .day-name{ color: var(--paper); }
+  .day-card.is-today .day-date{ color: rgba(251,246,238,0.6); }
+  .day-card.is-today .item-label{ color: rgba(251,246,238,0.55); }
+  .day-card.is-today .divider{ background: rgba(251,246,238,0.18); }
+  .day-card.is-today .icon{ color: var(--gold); }
+  .day-card.is-today::before{
+    content: "今日";
+    position: absolute;
+    top: 14px; right: 16px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    border: 1px solid rgba(200,154,60,0.5);
+    border-radius: 999px;
+    padding: 2px 10px;
   }
 
-  .day-card.is-today::before{
-    content: "今天";
-    position: absolute;
-    top: -11px;
-    left: 18px;
-    background: var(--yolk);
-    color: #1E2A20;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 999px;
-    letter-spacing: 0.05em;
+  .num{
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    color: var(--rose);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
   }
 
   .day-name{
-    font-family: 'Zhi Mang Xing', cursive;
-    font-size: 34px;
-    color: var(--chalk);
-    margin: 4px 0 2px;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--plum);
+    margin-bottom: 2px;
   }
 
   .day-date{
     font-size: 12px;
-    color: var(--chalk-dim);
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
+    color: var(--ink);
+    opacity: .5;
+    margin-bottom: 22px;
   }
 
-  .dish-list{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
+  .divider{
+    width: 100%;
+    height: 1px;
+    background: var(--line);
+    margin: 18px 0;
   }
 
-  .dish-list li{
+  .item{
     display: flex;
     align-items: flex-start;
-    gap: 9px;
-    font-size: 15px;
-    line-height: 1.5;
+    gap: 10px;
+    margin-bottom: 4px;
   }
 
-  .dish-tag{
+  .icon{
     flex: 0 0 auto;
-    font-size: 10px;
-    color: var(--yolk);
-    border: 1px solid rgba(231,163,62,0.45);
-    border-radius: 4px;
-    padding: 1px 5px;
+    width: 20px; height: 20px;
+    color: var(--gold);
     margin-top: 2px;
-    letter-spacing: 0.03em;
   }
 
-  .chef-pick{
-    position: absolute;
-    top: 16px;
-    right: -10px;
-    background: var(--stamp-red);
-    color: var(--chalk);
+  .item-body{ flex: 1; }
+
+  .item-label{
     font-size: 11px;
-    font-weight: 700;
-    padding: 4px 10px 4px 12px;
-    border-radius: 3px 0 0 3px;
-    letter-spacing: 0.04em;
-    transform: rotate(2deg);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    opacity: .45;
+    margin-bottom: 2px;
+  }
+
+  .item-value{
+    font-size: 15.5px;
+    font-weight: 500;
+    line-height: 1.4;
   }
 
   /* ---------- Footer ---------- */
   footer{
-    margin-top: 56px;
+    margin-top: 60px;
     text-align: center;
-    color: var(--chalk-dim);
+    color: var(--ink);
+    opacity: .55;
     font-size: 13px;
-    line-height: 1.8;
-  }
-
-  footer .note{
-    color: var(--yolk);
-    font-family: 'Zhi Mang Xing', cursive;
-    font-size: 20px;
-    display: block;
-    margin-bottom: 6px;
+    line-height: 1.9;
   }
 
   @keyframes fadeUp{
-    from{ opacity: 0; transform: translateY(10px); }
+    from{ opacity: 0; transform: translateY(8px); }
     to{ opacity: 1; transform: translateY(0); }
   }
 
@@ -208,107 +213,162 @@
     *{ animation: none !important; transition: none !important; }
   }
 
-  :focus-visible{
-    outline: 2px solid var(--yolk);
-    outline-offset: 3px;
+  :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px){
+    .deck{ grid-template-columns: repeat(2, 1fr); border-left: 1px solid var(--line); }
+  }
+  @media (max-width: 520px){
+    .deck{ grid-template-columns: 1fr; }
+    .legend{ flex-direction: column; align-items: center; gap: 10px; }
   }
 </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="icon-bowl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M3 11h18a9 9 0 0 1-18 0Z"/>
+    <path d="M12 11V6"/>
+    <path d="M8.5 8.5 12 6l3.5 2.5"/>
+    <path d="M6 15.5c1.2 1.4 3.6 2 6 2s4.8-.6 6-2"/>
+  </symbol>
+  <symbol id="icon-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M5 8h11v7a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8Z"/>
+    <path d="M16 10h1.5a2.5 2.5 0 0 1 0 5H16"/>
+    <path d="M8 5c.5-1 .2-1.5-.3-2M12 5c.5-1 .2-1.5-.3-2"/>
+  </symbol>
+</svg>
+
 <div class="wrap">
 
   <header>
-    <span class="eyebrow">WEEKLY MENU</span>
-    <h1>本週菜單</h1>
-    <div class="date-range" id="dateRange">8 月 25 日（一）— 8 月 31 日（日）</div>
-    <div class="chalk-rule"></div>
+    <div class="eyebrow">LUNCH &amp; TEA TIME</div>
+    <h1>本週午間菜單</h1>
+    <div class="date-range">8 月 25 日（一）— 8 月 29 日（五）</div>
+    <div class="legend">
+      <span><svg class="icon"><use href="#icon-bowl"/></svg>中餐</span>
+      <span><svg class="icon"><use href="#icon-cup"/></svg>下午茶飲料</span>
+    </div>
   </header>
 
   <div class="deck" id="deck">
 
     <div class="day-card" data-day="1">
+      <div class="num">壹</div>
       <div class="day-name">週一</div>
       <div class="day-date">08.25</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>紅燒獅子頭</li>
-        <li><span class="dish-tag">配菜</span>清炒時蔬</li>
-        <li><span class="dish-tag">湯品</span>蘿蔔排骨湯</li>
-      </ul>
+      <div class="item">
+        <svg class="icon"><use href="#icon-bowl"/></svg>
+        <div class="item-body">
+          <div class="item-label">中餐</div>
+          <div class="item-value">滷排骨便當</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg class="icon"><use href="#icon-cup"/></svg>
+        <div class="item-body">
+          <div class="item-label">下午茶</div>
+          <div class="item-value">冬瓜檸檬茶</div>
+        </div>
+      </div>
     </div>
 
     <div class="day-card" data-day="2">
+      <div class="num">貳</div>
       <div class="day-name">週二</div>
       <div class="day-date">08.26</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>三杯雞</li>
-        <li><span class="dish-tag">配菜</span>塔香茄子</li>
-        <li><span class="dish-tag">湯品</span>紫菜蛋花湯</li>
-      </ul>
+      <div class="item">
+        <svg class="icon"><use href="#icon-bowl"/></svg>
+        <div class="item-body">
+          <div class="item-label">中餐</div>
+          <div class="item-value">三杯雞燴飯</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg class="icon"><use href="#icon-cup"/></svg>
+        <div class="item-body">
+          <div class="item-label">下午茶</div>
+          <div class="item-value">珍珠奶茶</div>
+        </div>
+      </div>
     </div>
 
     <div class="day-card" data-day="3">
-      <span class="chef-pick">主廚推薦</span>
+      <div class="num">參</div>
       <div class="day-name">週三</div>
       <div class="day-date">08.27</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>紅燒牛腩</li>
-        <li><span class="dish-tag">配菜</span>薑絲炒高麗菜</li>
-        <li><span class="dish-tag">湯品</span>玉米濃湯</li>
-      </ul>
+      <div class="item">
+        <svg class="icon"><use href="#icon-bowl"/></svg>
+        <div class="item-body">
+          <div class="item-label">中餐</div>
+          <div class="item-value">紅燒牛肉麵</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg class="icon"><use href="#icon-cup"/></svg>
+        <div class="item-body">
+          <div class="item-label">下午茶</div>
+          <div class="item-value">仙草凍奶</div>
+        </div>
+      </div>
     </div>
 
     <div class="day-card" data-day="4">
+      <div class="num">肆</div>
       <div class="day-name">週四</div>
       <div class="day-date">08.28</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>宮保雞丁</li>
-        <li><span class="dish-tag">配菜</span>涼拌豆芽</li>
-        <li><span class="dish-tag">湯品</span>味噌湯</li>
-      </ul>
+      <div class="item">
+        <svg class="icon"><use href="#icon-bowl"/></svg>
+        <div class="item-body">
+          <div class="item-label">中餐</div>
+          <div class="item-value">泰式打拋豬</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg class="icon"><use href="#icon-cup"/></svg>
+        <div class="item-body">
+          <div class="item-label">下午茶</div>
+          <div class="item-value">百香綠茶</div>
+        </div>
+      </div>
     </div>
 
     <div class="day-card" data-day="5">
+      <div class="num">伍</div>
       <div class="day-name">週五</div>
       <div class="day-date">08.29</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>清蒸鱸魚</li>
-        <li><span class="dish-tag">配菜</span>蒜炒地瓜葉</li>
-        <li><span class="dish-tag">湯品</span>冬瓜排骨湯</li>
-      </ul>
-    </div>
-
-    <div class="day-card" data-day="6">
-      <div class="day-name">週六</div>
-      <div class="day-date">08.30</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>滷豬腳</li>
-        <li><span class="dish-tag">配菜</span>燙青菜</li>
-        <li><span class="dish-tag">湯品</span>酸辣湯</li>
-      </ul>
-    </div>
-
-    <div class="day-card" data-day="0">
-      <div class="day-name">週日</div>
-      <div class="day-date">08.31</div>
-      <ul class="dish-list">
-        <li><span class="dish-tag">主餐</span>咖哩雞肉飯</li>
-        <li><span class="dish-tag">配菜</span>generic 小黃瓜沙拉</li>
-        <li><span class="dish-tag">湯品</span>南瓜濃湯</li>
-      </ul>
+      <div class="item">
+        <svg class="icon"><use href="#icon-bowl"/></svg>
+        <div class="item-body">
+          <div class="item-label">中餐</div>
+          <div class="item-value">清蒸鱸魚定食</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="item">
+        <svg class="icon"><use href="#icon-cup"/></svg>
+        <div class="item-body">
+          <div class="item-label">下午茶</div>
+          <div class="item-value">桂圓紅棗茶</div>
+        </div>
+      </div>
     </div>
 
   </div>
 
   <footer>
-    <span class="note">歡迎光臨，慢慢選</span>
-    菜色將依季節與食材供應每週調整・如有飲食限制請提前告知
+    菜色將依季節與食材供應調整・如有飲食限制請提前告知
   </footer>
 
 </div>
 
 <script>
-  // 自動標示「今天」對應的卡片（依瀏覽器當地時間的星期幾）
   const todayIndex = new Date().getDay(); // 0=週日 ... 6=週六
   document.querySelectorAll('.day-card').forEach(card => {
     if (parseInt(card.dataset.day, 10) === todayIndex) {

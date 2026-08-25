@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菜單後台管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #2B1D22; --paper: #FBF6EE; --paper-soft: #F3ECDF;
+    --plum: #2B1728; --gold: #C89A3C; --rose: #B85C6B;
+    --green: #4C7A5C; --red: #B8453C; --line: rgba(43,29,34,0.14);
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0; background: var(--paper); color: var(--ink);
+    font-family: 'Noto Sans TC', sans-serif; min-height: 100vh;
+  }
+  .wrap{ max-width: 640px; margin: 0 auto; padding: 60px 20px 100px; }
+  h1{
+    font-family: 'Noto Serif TC', serif; font-weight: 900;
+    font-size: 30px; color: var(--plum); margin: 0 0 8px; text-align:center;
+  }
+  .sub{ text-align:center; font-size: 13px; opacity: .55; margin-bottom: 40px; }
+
+  .panel{
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 28px; margin-bottom: 20px;
+  }
+
+  label{ display:block; font-size: 12px; letter-spacing: 0.05em; opacity: .6; margin-bottom: 6px; margin-top: 16px; }
+  label:first-of-type{ margin-top: 0; }
+  input[type=password], input[type=text]{
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 15px; font-family: inherit; background: var(--paper-soft); color: var(--ink);
+  }
+  input:focus{ outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  button{
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    border: none; border-radius: 8px; padding: 13px 20px; cursor: pointer;
+    width: 100%; margin-top: 22px; transition: opacity .2s ease;
+  }
+  button:hover{ opacity: .88; }
+  button:disabled{ opacity: .5; cursor: not-allowed; }
+  .btn-primary{ background: var(--plum); color: var(--paper); }
+  .btn-secondary{ background: transparent; color: var(--ink); border: 1px solid var(--line); }
+
+  .hint{ font-size: 12px; opacity: .5; margin-top: 10px; line-height: 1.6; }
+  .msg{ font-size: 13px; padding: 10px 14px; border-radius: 8px; margin-top: 16px; display:none; }
+  .msg.show{ display:block; }
+  .msg.ok{ background: rgba(76,122,92,0.12); color: var(--green); }
+  .msg.err{ background: rgba(184,69,60,0.1); color: var(--red); }
+
+  .day-block{ border-top: 1px solid var(--line); padding-top: 18px; margin-top: 18px; }
+  .day-block:first-of-type{ border-top: none; padding-top: 0; margin-top: 0; }
+  .day-title{ font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 17px; color: var(--plum); margin-bottom: 2px; }
+  .day-date{ font-size: 12px; opacity: .45; margin-bottom: 10px; }
+
+  .hidden{ display: none; }
+
+  .row{ display:flex; gap: 10px; }
+  .row button{ flex: 1; }
+
+  #logoutBtn{ margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>菜單後台管理</h1>
+  <div class="sub">本週午間菜單・編輯後台</div>
+
+  <!-- 步驟 1：密碼登入 -->
+  <div class="panel" id="loginPanel">
+    <label for="pw">管理密碼</label>
+    <input type="password" id="pw" placeholder="輸入密碼">
+    <button class="btn-primary" id="loginBtn">登入</button>
+    <div class="msg err" id="loginMsg"></div>
+  </div>
+
+  <!-- 步驟 2：GitHub 權杖 + 讀取菜單 -->
+  <div class="panel hidden" id="tokenPanel">
+    <label for="owner">GitHub 帳號</label>
+    <input type="text" id="owner" value="jason315826">
+    <label for="repo">Repository 名稱</label>
+    <input type="text" id="repo" value="ITRI_weekly-menu">
+    <label for="token">GitHub 權杖 (Personal Access Token)</label>
+    <input type="password" id="token" placeholder="貼上你的 token">
+    <div class="hint">
+      去 GitHub 右上角頭像 → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token。Repository access 選這個 repo,Permissions 裡把 <b>Contents</b> 設成 Read and write。權杖只會存在你自己的瀏覽器裡。
+    </div>
+    <button class="btn-primary" id="loadBtn">讀取目前菜單</button>
+    <div class="msg err" id="tokenMsg"></div>
+  </div>
+
+  <!-- 步驟 3：編輯表單 -->
+  <div class="panel hidden" id="editPanel">
+    <label for="range">日期區間文字</label>
+    <input type="text" id="range">
+    <div id="daysContainer"></div>
+    <div class="row">
+      <button class="btn-primary" id="saveBtn">儲存並發布</button>
+    </div>
+    <button class="btn-secondary" id="logoutBtn">登出</button>
+    <div class="msg" id="saveMsg"></div>
+  </div>
+</div>
+
+<script>
+  // ---- 這裡改你自己的後台密碼 ----
+  const ADMIN_PASSWORD = "menu2026";
+
+  const loginPanel = document.getElementById('loginPanel');
+  const tokenPanel = document.getElementById('tokenPanel');
+  const editPanel = document.getElementById('editPanel');
+  let currentSha = null;
+  let currentData = null;
+
+  // 若之前登入過,略過密碼畫面
+  if (sessionStorage.getItem('menuAdminAuthed') === '1') {
+    showTokenPanel();
+  }
+
+  document.getElementById('loginBtn').onclick = () => {
+    const pw = document.getElementById('pw').value;
+    if (pw === ADMIN_PASSWORD) {
+      sessionStorage.setItem('menuAdminAuthed', '1');
+      showTokenPanel();
+    } else {
+      showMsg('loginMsg', '密碼錯誤,請再試一次', false);
+    }
+  };
+
+  function showTokenPanel(){
+    loginPanel.classList.add('hidden');
+    tokenPanel.classList.remove('hidden');
+    const savedToken = localStorage.getItem('menuAdminToken');
+    if (savedToken) document.getElementById('token').value = savedToken;
+  }
+
+  function showMsg(id, text, ok){
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = 'msg show ' + (ok ? 'ok' : 'err');
+  }
+
+  function b64EncodeUtf8(str){
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+  function b64DecodeUtf8(b64){
+    return decodeURIComponent(escape(atob(b64)));
+  }
+
+  function apiBase(){
+    const owner = document.getElementById('owner').value.trim();
+    const repo = document.getElementById('repo').value.trim();
+    return `https://api.github.com/repos/${owner}/${repo}/contents/menu.json`;
+  }
+
+  document.getElementById('loadBtn').onclick = async () => {
+    const token = document.getElementById('token').value.trim();
+    if (!token) { showMsg('tokenMsg', '請輸入 GitHub 權杖', false); return; }
+    localStorage.setItem('menuAdminToken', token);
+
+    try{
+      const res = await fetch(apiBase(), {
+        headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+      });
+      if (!res.ok) {
+        showMsg('tokenMsg', `讀取失敗(${res.status})：請確認帳號/repo名稱正確、權杖有效且有 Contents 讀寫權限`, false);
+        return;
+      }
+      const file = await res.json();
+      currentSha = file.sha;
+      currentData = JSON.parse(b64DecodeUtf8(file.content));
+      renderEditForm(currentData);
+      tokenPanel.classList.add('hidden');
+      editPanel.classList.remove('hidden');
+    }catch(err){
+      showMsg('tokenMsg', '連線失敗：' + err.message, false);
+    }
+  };
+
+  function renderEditForm(data){
+    document.getElementById('range').value = data.range;
+    const container = document.getElementById('daysContainer');
+    container.innerHTML = data.days.map((d, i) => `
+      <div class="day-block">
+        <div class="day-title">${d.name}</div>
+        <div class="day-date">${d.date}</div>
+        <label>中餐</label>
+        <input type="text" data-idx="${i}" data-field="lunch" value="${d.lunch.replace(/"/g,'&quot;')}">
+        <label>下午茶飲料</label>
+        <input type="text" data-idx="${i}" data-field="drink" value="${d.drink.replace(/"/g,'&quot;')}">
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('saveBtn').onclick = async () => {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = '儲存中…';
+
+    currentData.range = document.getElementById('range').value;
+    document.querySelectorAll('#daysContainer input').forEach(inp => {
+      currentData.days[inp.dataset.idx][inp.dataset.field] = inp.value;
+    });
+
+    const token = document.getElementById('token').value.trim();
+    const newContent = b64EncodeUtf8(JSON.stringify(currentData, null, 2));
+
+    try{
+      const res = await fetch(apiBase(), {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: '更新菜單（後台）',
+          content: newContent,
+          sha: currentSha
+        })
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        showMsg('saveMsg', `儲存失敗(${res.status})：${errData.message || '請檢查權杖權限'}`, false);
+        btn.disabled = false;
+        btn.textContent = '儲存並發布';
+        return;
+      }
+      const result = await res.json();
+      currentSha = result.content.sha;
+      showMsg('saveMsg', '已儲存！網站約 1 分鐘後會更新完成', true);
+    }catch(err){
+      showMsg('saveMsg', '儲存失敗：' + err.message, false);
+    }
+    btn.disabled = false;
+    btn.textContent = '儲存並發布';
+  };
+
+  document.getElementById('logoutBtn').onclick = () => {
+    sessionStorage.removeItem('menuAdminAuthed');
+    localStorage.removeItem('menuAdminToken');
+    location.reload();
+  };
+</script>
+
+</body>
+</html>

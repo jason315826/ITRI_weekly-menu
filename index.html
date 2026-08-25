@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>本週菜單｜週一至週日</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zhi+Mang+Xing&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1E2A20;
+    --bg-card: #24321F;
+    --bg-card-hi: #2C3D26;
+    --chalk: #F3EEDC;
+    --chalk-dim: #C9C4AE;
+    --yolk: #E7A33E;
+    --stamp-red: #C1443C;
+    --line: rgba(243,238,220,0.22);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.025) 0, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(255,255,255,0.02) 0, transparent 45%);
+    color: var(--chalk);
+    font-family: 'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrap{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    text-align: center;
+    margin-bottom: 44px;
+    animation: fadeUp .7s ease both;
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font-size: 13px;
+    letter-spacing: 0.28em;
+    color: var(--yolk);
+    border: 1px solid rgba(231,163,62,0.4);
+    padding: 5px 14px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+
+  h1{
+    font-family: 'Zhi Mang Xing', cursive;
+    font-weight: 400;
+    font-size: clamp(52px, 9vw, 88px);
+    line-height: 1;
+    margin: 0 0 10px;
+    color: var(--chalk);
+    text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+  }
+
+  .date-range{
+    font-size: 15px;
+    color: var(--chalk-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .chalk-rule{
+    width: 140px;
+    height: 2px;
+    margin: 22px auto 0;
+    background: repeating-linear-gradient(90deg, var(--yolk) 0 10px, transparent 10px 16px);
+    opacity: 0.8;
+  }
+
+  /* ---------- Day deck ---------- */
+  .deck{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+  }
+
+  .day-card{
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 20px 24px;
+    animation: fadeUp .7s ease both;
+    transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  }
+
+  .day-card:hover{
+    transform: translateY(-4px) rotate(-0.3deg);
+    background: var(--bg-card-hi);
+    border-color: rgba(231,163,62,0.4);
+  }
+
+  .day-card.is-today{
+    border-color: var(--yolk);
+    box-shadow: 0 0 0 1px rgba(231,163,62,0.25), 0 12px 28px rgba(0,0,0,0.35);
+  }
+
+  .day-card.is-today::before{
+    content: "今天";
+    position: absolute;
+    top: -11px;
+    left: 18px;
+    background: var(--yolk);
+    color: #1E2A20;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+  }
+
+  .day-name{
+    font-family: 'Zhi Mang Xing', cursive;
+    font-size: 34px;
+    color: var(--chalk);
+    margin: 4px 0 2px;
+  }
+
+  .day-date{
+    font-size: 12px;
+    color: var(--chalk-dim);
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+
+  .dish-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .dish-list li{
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .dish-tag{
+    flex: 0 0 auto;
+    font-size: 10px;
+    color: var(--yolk);
+    border: 1px solid rgba(231,163,62,0.45);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-top: 2px;
+    letter-spacing: 0.03em;
+  }
+
+  .chef-pick{
+    position: absolute;
+    top: 16px;
+    right: -10px;
+    background: var(--stamp-red);
+    color: var(--chalk);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px 4px 12px;
+    border-radius: 3px 0 0 3px;
+    letter-spacing: 0.04em;
+    transform: rotate(2deg);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top: 56px;
+    text-align: center;
+    color: var(--chalk-dim);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  footer .note{
+    color: var(--yolk);
+    font-family: 'Zhi Mang Xing', cursive;
+    font-size: 20px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  @keyframes fadeUp{
+    from{ opacity: 0; transform: translateY(10px); }
+    to{ opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  :focus-visible{
+    outline: 2px solid var(--yolk);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">WEEKLY MENU</span>
+    <h1>本週菜單</h1>
+    <div class="date-range" id="dateRange">8 月 25 日（一）— 8 月 31 日（日）</div>
+    <div class="chalk-rule"></div>
+  </header>
+
+  <div class="deck" id="deck">
+
+    <div class="day-card" data-day="1">
+      <div class="day-name">週一</div>
+      <div class="day-date">08.25</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>紅燒獅子頭</li>
+        <li><span class="dish-tag">配菜</span>清炒時蔬</li>
+        <li><span class="dish-tag">湯品</span>蘿蔔排骨湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="2">
+      <div class="day-name">週二</div>
+      <div class="day-date">08.26</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>三杯雞</li>
+        <li><span class="dish-tag">配菜</span>塔香茄子</li>
+        <li><span class="dish-tag">湯品</span>紫菜蛋花湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="3">
+      <span class="chef-pick">主廚推薦</span>
+      <div class="day-name">週三</div>
+      <div class="day-date">08.27</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>紅燒牛腩</li>
+        <li><span class="dish-tag">配菜</span>薑絲炒高麗菜</li>
+        <li><span class="dish-tag">湯品</span>玉米濃湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="4">
+      <div class="day-name">週四</div>
+      <div class="day-date">08.28</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>宮保雞丁</li>
+        <li><span class="dish-tag">配菜</span>涼拌豆芽</li>
+        <li><span class="dish-tag">湯品</span>味噌湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="5">
+      <div class="day-name">週五</div>
+      <div class="day-date">08.29</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>清蒸鱸魚</li>
+        <li><span class="dish-tag">配菜</span>蒜炒地瓜葉</li>
+        <li><span class="dish-tag">湯品</span>冬瓜排骨湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="6">
+      <div class="day-name">週六</div>
+      <div class="day-date">08.30</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>滷豬腳</li>
+        <li><span class="dish-tag">配菜</span>燙青菜</li>
+        <li><span class="dish-tag">湯品</span>酸辣湯</li>
+      </ul>
+    </div>
+
+    <div class="day-card" data-day="0">
+      <div class="day-name">週日</div>
+      <div class="day-date">08.31</div>
+      <ul class="dish-list">
+        <li><span class="dish-tag">主餐</span>咖哩雞肉飯</li>
+        <li><span class="dish-tag">配菜</span>generic 小黃瓜沙拉</li>
+        <li><span class="dish-tag">湯品</span>南瓜濃湯</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <span class="note">歡迎光臨，慢慢選</span>
+    菜色將依季節與食材供應每週調整・如有飲食限制請提前告知
+  </footer>
+
+</div>
+
+<script>
+  // 自動標示「今天」對應的卡片（依瀏覽器當地時間的星期幾）
+  const todayIndex = new Date().getDay(); // 0=週日 ... 6=週六
+  document.querySelectorAll('.day-card').forEach(card => {
+    if (parseInt(card.dataset.day, 10) === todayIndex) {
+      card.classList.add('is-today');
+    }
+  });
+</script>
+
+</body>
+</html>

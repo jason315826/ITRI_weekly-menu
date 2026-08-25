@@ -1,10 +1,10 @@
 {
-  "weekStart": "2026-08-24",
+  "weekStart": "2026-08-31",
   "notes": [
     "（一）、當日菜單請以群組為主。",
     "（二）、請依照時間於訂餐系統預定，若逾時一概不接受訂餐，謝謝配合。"
   ],
-  "lastUpdated": "2026-08-25T10:49:21.763Z",
+  "lastUpdated": "2026-08-25T10:59:22.602Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {

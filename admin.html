@@ -122,14 +122,10 @@
   </div>
 </div>
 
-<datalist id="presetLunch"></datalist>
-<datalist id="presetDrink"></datalist>
-
 <script>
   // ---- 這裡改你自己的後台密碼 ----
   const ADMIN_PASSWORD = "itri18899";
   const DAY_NAMES = ['週一','週二','週三','週四','週五'];
-  const PRESET_CAP = 60;
 
   const loginPanel = document.getElementById('loginPanel');
   const tokenPanel = document.getElementById('tokenPanel');
@@ -196,12 +192,11 @@
       const file = await res.json();
       currentSha = file.sha;
       currentData = JSON.parse(b64DecodeUtf8(file.content));
-      if (!currentData.presets) currentData.presets = { lunch: [], drink: [] };
+      delete currentData.presets;
       currentData.days.forEach(d => {
         if (d.lunchLink === undefined) d.lunchLink = '';
         if (d.drinkLink === undefined) d.drinkLink = '';
       });
-      renderPresetLists(currentData.presets);
       renderEditForm(currentData);
       tokenPanel.classList.add('hidden');
       editPanel.classList.remove('hidden');
@@ -209,13 +204,6 @@
       showMsg('tokenMsg', '連線失敗：' + err.message, false);
     }
   };
-
-  function renderPresetLists(presets){
-    document.getElementById('presetLunch').innerHTML =
-      (presets.lunch || []).map(v => `<option value="${v.replace(/"/g,'&quot;')}">`).join('');
-    document.getElementById('presetDrink').innerHTML =
-      (presets.drink || []).map(v => `<option value="${v.replace(/"/g,'&quot;')}">`).join('');
-  }
 
   function renderEditForm(data){
     document.getElementById('weekStart').value = data.weekStart;
@@ -229,14 +217,14 @@
         <div class="day-date-preview" data-preview="${i}"></div>
 
         <div class="section-title">中餐</div>
-        <label>品項（可直接輸入,或從常用清單挑選）</label>
-        <input type="text" list="presetLunch" data-idx="${i}" data-field="lunch" value="${(d.lunch||'').replace(/"/g,'&quot;')}">
+        <label>品項</label>
+        <input type="text" data-idx="${i}" data-field="lunch" value="${(d.lunch||'').replace(/"/g,'&quot;')}">
         <label class="sub-field">中餐超連結（選填）</label>
         <input type="url" data-idx="${i}" data-field="lunchLink" value="${(d.lunchLink||'').replace(/"/g,'&quot;')}" placeholder="https://...">
 
         <div class="section-title" style="margin-top:16px">下午茶飲料</div>
-        <label>品項（可直接輸入,或從常用清單挑選）</label>
-        <input type="text" list="presetDrink" data-idx="${i}" data-field="drink" value="${(d.drink||'').replace(/"/g,'&quot;')}">
+        <label>品項</label>
+        <input type="text" data-idx="${i}" data-field="drink" value="${(d.drink||'').replace(/"/g,'&quot;')}">
         <label class="sub-field">飲料超連結（選填）</label>
         <input type="url" data-idx="${i}" data-field="drinkLink" value="${(d.drinkLink||'').replace(/"/g,'&quot;')}" placeholder="https://...">
       </div>
@@ -257,14 +245,6 @@
     renderDayPreviewDates(e.target.value);
   });
 
-  function mergePresets(list, newValues){
-    const set = new Set(list || []);
-    newValues.forEach(v => { if (v && v !== '無') set.add(v); });
-    let arr = Array.from(set);
-    if (arr.length > PRESET_CAP) arr = arr.slice(arr.length - PRESET_CAP);
-    return arr;
-  }
-
   document.getElementById('saveBtn').onclick = async () => {
     const btn = document.getElementById('saveBtn');
     btn.disabled = true;
@@ -279,12 +259,6 @@
     document.querySelectorAll('#daysContainer input[data-field]').forEach(inp => {
       currentData.days[inp.dataset.idx][inp.dataset.field] = inp.value.trim();
     });
-
-    const lunchValues = currentData.days.map(d => d.lunch);
-    const drinkValues = currentData.days.map(d => d.drink);
-    if (!currentData.presets) currentData.presets = { lunch: [], drink: [] };
-    currentData.presets.lunch = mergePresets(currentData.presets.lunch, lunchValues);
-    currentData.presets.drink = mergePresets(currentData.presets.drink, drinkValues);
 
     const token = document.getElementById('token').value.trim();
     const newContent = b64EncodeUtf8(JSON.stringify(currentData, null, 2));
@@ -312,7 +286,6 @@
       }
       const result = await res.json();
       currentSha = result.content.sha;
-      renderPresetLists(currentData.presets);
       showMsg('saveMsg', '已儲存！網站約 1 分鐘後會更新完成', true);
     }catch(err){
       showMsg('saveMsg', '儲存失敗：' + err.message, false);

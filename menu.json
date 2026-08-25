@@ -6,20 +6,6 @@
   ],
   "lastUpdated": "2026-08-25T10:49:21.763Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
-  "presets": {
-    "lunch": [
-      "竹美港式燒臘",
-      "吳家甜不辣",
-      "游麵館",
-      "三顧茅廬 新竹光復店",
-      "三顧茅廬"
-    ],
-    "drink": [
-      "沐飲",
-      "罪惡雞排",
-      "無"
-    ]
-  },
   "days": [
     {
       "lunch": "竹美港式燒臘",

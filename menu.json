@@ -6,7 +6,7 @@
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-08-26T06:33:03.537Z",
+  "lastUpdated": "2026-08-26T23:59:08.667Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
@@ -30,7 +30,7 @@
     {
       "lunch": "三顧茅廬",
       "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260825-7P4Z0I",
-      "drink": "可不可熟成茶行",
+      "drink": "藍衫茶所",
       "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260826-TO9614"
     },
     {

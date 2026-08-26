@@ -45,9 +45,10 @@
   }
   .eyebrow::before, .eyebrow::after{ content:""; width: 26px; height: 1px; background: var(--rose); opacity: .5; }
   h1{
-    font-family: 'Noto Serif TC', serif; font-weight: 900;
-    font-size: clamp(38px, 6vw, 58px); line-height: 1.15;
-    margin: 0 0 12px; color: var(--plum); letter-spacing: 0.02em;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: var(--title-weight, 900);
+    font-size: var(--title-font-size, clamp(38px, 6vw, 58px)); line-height: 1.15;
+    margin: 0 0 12px; color: var(--title-color, var(--plum)); letter-spacing: 0.02em;
   }
   .date-range{ font-size: 14px; color: var(--ink); opacity: .6; letter-spacing: 0.05em; }
   .legend{ display: flex; justify-content: center; gap: 28px; margin-top: 26px; font-size: 13px; color: var(--ink); opacity: .75; }
@@ -84,7 +85,9 @@
   .item-body{ flex: 1; min-width: 0; }
   .item-label{ font-size: 11.5px; letter-spacing: 0.08em; color: var(--rose); opacity: .8; margin-bottom: 4px; font-weight: 700; }
   .item-value{
-    font-size: 18.5px; font-weight: 700; line-height: 1.45; color: var(--plum);
+    font-size: var(--item-font-size, 18.5px);
+    font-weight: var(--item-weight, 700);
+    line-height: 1.45; color: var(--item-color, var(--plum));
     overflow-wrap: break-word; word-break: break-word;
     display: inline-block; text-decoration: none;
   }
@@ -116,10 +119,10 @@
   }
   .notes ul{ margin: 0; padding: 0; list-style: none; }
   .notes li{
-    font-size: 17px;
+    font-size: var(--notes-font-size, 17px);
     line-height: 1.9;
-    color: var(--ink);
-    font-weight: 500;
+    color: var(--notes-color, var(--ink));
+    font-weight: var(--notes-weight, 500);
   }
 
   .footer-meta{
@@ -240,6 +243,24 @@
     return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())} 更新`;
   }
 
+  function applyStyles(styles){
+    if (!styles) return;
+    const root = document.documentElement.style;
+    const map = {
+      title: ['--title-font-size', '--title-color', '--title-weight'],
+      item:  ['--item-font-size',  '--item-color',  '--item-weight'],
+      notes: ['--notes-font-size', '--notes-color', '--notes-weight']
+    };
+    Object.keys(map).forEach(key => {
+      const s = styles[key];
+      if (!s) return;
+      const [sizeVar, colorVar, weightVar] = map[key];
+      if (s.fontSize) root.setProperty(sizeVar, s.fontSize + 'px');
+      if (s.color) root.setProperty(colorVar, s.color);
+      if (s.bold !== undefined) root.setProperty(weightVar, s.bold ? '700' : '400');
+    });
+  }
+
   function itemValueHtml(text, link){
     const safeText = text || '';
     if (link && link.trim()){
@@ -252,6 +273,7 @@
     try{
       const res = await fetch('menu.json?_=' + Date.now());
       const data = await res.json();
+      applyStyles(data.styles);
       const today = new Date();
 
       const dates = [0,1,2,3,4].map(i => addDays(data.weekStart, i));

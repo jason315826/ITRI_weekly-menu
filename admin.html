@@ -17,7 +17,7 @@
     margin:0; background: var(--paper); color: var(--ink);
     font-family: 'Noto Sans TC', sans-serif; min-height: 100vh;
   }
-  .wrap{ max-width: 640px; margin: 0 auto; padding: 60px 20px 100px; position: relative; }
+  .wrap{ max-width: 820px; margin: 0 auto; padding: 60px 20px 100px; position: relative; }
   .home-link{
     position: absolute; top: 22px; right: 22px;
     font-size: 12px; letter-spacing: 0.05em; color: var(--ink); opacity: .4;
@@ -45,6 +45,30 @@
   }
   textarea{ resize: vertical; min-height: 80px; line-height: 1.6; }
   input:focus, textarea:focus{ outline: 2px solid var(--gold); outline-offset: 1px; }
+
+  /* ---- horizontal (landscape) field layout ---- */
+  .field{ display:flex; align-items:center; gap: 18px; margin-top: 16px; }
+  .field:first-of-type{ margin-top: 0; }
+  .field > label{ flex: 0 0 160px; margin: 0; }
+  .field > input, .field > select, .field > textarea{ flex: 1; min-width: 0; }
+  .field.field-sub{ margin-top: 8px; }
+  .field.field-sub > label{ flex-basis: 160px; }
+  input[type=color]{
+    width: 56px; height: 40px; padding: 3px; border: 1px solid var(--line);
+    border-radius: 8px; background: var(--paper-soft); cursor: pointer;
+  }
+  select{
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 15px; font-family: inherit; background: var(--paper-soft); color: var(--ink);
+  }
+  input[type=number]{
+    width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px;
+    font-size: 15px; font-family: inherit; background: var(--paper-soft); color: var(--ink);
+  }
+  @media (max-width: 640px){
+    .field{ flex-direction: column; align-items: stretch; gap: 6px; }
+    .field > label{ flex-basis: auto; }
+  }
 
   button{
     font-family: inherit; font-size: 15px; font-weight: 700;
@@ -108,20 +132,28 @@
 
   <!-- 步驟 1：密碼登入 -->
   <div class="panel" id="loginPanel">
-    <label for="pw">密碼</label>
-    <input type="password" id="pw" placeholder="請輸入管理員密碼">
+    <div class="field">
+      <label for="pw">密碼</label>
+      <input type="password" id="pw" placeholder="請輸入管理員密碼">
+    </div>
     <button class="btn-primary" id="loginBtn">登入</button>
     <div class="msg err" id="loginMsg"></div>
   </div>
 
   <!-- 步驟 2：GitHub 權杖 + 讀取菜單 -->
   <div class="panel hidden" id="tokenPanel">
-    <label for="owner">GitHub 帳號</label>
-    <input type="text" id="owner" value="jason315826">
-    <label for="repo">Repository 名稱</label>
-    <input type="text" id="repo" value="ITRI_weekly-menu">
-    <label for="token">GitHub 權杖 (Personal Access Token)</label>
-    <input type="password" id="token" placeholder="貼上你的 token">
+    <div class="field">
+      <label for="owner">GitHub 帳號</label>
+      <input type="text" id="owner" value="jason315826">
+    </div>
+    <div class="field">
+      <label for="repo">Repository 名稱</label>
+      <input type="text" id="repo" value="ITRI_weekly-menu">
+    </div>
+    <div class="field">
+      <label for="token">GitHub 權杖</label>
+      <input type="password" id="token" placeholder="貼上你的 Personal Access Token">
+    </div>
     <button class="btn-primary" id="loadBtn">讀取目前菜單</button>
     <div class="msg err" id="tokenMsg"></div>
   </div>
@@ -208,6 +240,20 @@
   }
   function escapeHtml(s){ return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+  const DEFAULT_STYLES = {
+    title: { fontSize: 46, color: '#2B1728', bold: true },
+    item:  { fontSize: 19, color: '#2B1728', bold: true },
+    notes: { fontSize: 17, color: '#2B1D22', bold: false }
+  };
+  function getStyles(){
+    const s = currentData.styles || {};
+    return {
+      title: { ...DEFAULT_STYLES.title, ...(s.title || {}) },
+      item:  { ...DEFAULT_STYLES.item,  ...(s.item  || {}) },
+      notes: { ...DEFAULT_STYLES.notes, ...(s.notes || {}) }
+    };
+  }
+
   document.getElementById('loadBtn').onclick = async () => {
     const token = document.getElementById('token').value.trim();
     if (!token) { showMsg('tokenMsg', '請輸入 GitHub 權杖', false); return; }
@@ -266,7 +312,8 @@
       { id: 'notes', title: '備註',
         preview: (currentData.notes && currentData.notes.length) ? `共 ${currentData.notes.length} 條` : '（未設定）' },
       { id: 'orderLink', title: '訂餐系統按鈕連結',
-        preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' }
+        preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
+      { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
 
@@ -356,14 +403,17 @@
     if (id.startsWith('day')) return DAY_NAMES[parseInt(id.replace('day',''))] + ' 菜單';
     if (id === 'notes') return '備註';
     if (id === 'orderLink') return '訂餐系統按鈕連結';
+    if (id === 'styles') return '文字樣式設定';
     return '';
   }
 
   function itemBodyFor(id){
     if (id === 'weekStart'){
       return `
-        <label for="f_weekStart">本週「週一」的日期</label>
-        <input type="date" id="f_weekStart" value="${currentData.weekStart || ''}">
+        <div class="field">
+          <label for="f_weekStart">本週「週一」的日期</label>
+          <input type="date" id="f_weekStart" value="${currentData.weekStart || ''}">
+        </div>
         <div class="hint">選擇本週「週一」的日期，系統將自動計算並顯示週一到週五的正確日期。</div>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
     }
@@ -372,16 +422,24 @@
       const d = currentData.days[i];
       return `
         <div class="section-title">中餐</div>
-        <label>品項</label>
-        <input type="text" id="f_lunch" value="${escapeHtml(d.lunch)}">
-        <label class="sub-field">中餐超連結（選填）</label>
-        <input type="url" id="f_lunchLink" value="${escapeHtml(d.lunchLink)}" placeholder="https://...">
+        <div class="field">
+          <label>品項</label>
+          <input type="text" id="f_lunch" value="${escapeHtml(d.lunch)}">
+        </div>
+        <div class="field field-sub">
+          <label class="sub-field">中餐超連結（選填）</label>
+          <input type="url" id="f_lunchLink" value="${escapeHtml(d.lunchLink)}" placeholder="https://...">
+        </div>
 
-        <div class="section-title" style="margin-top:16px">下午茶飲料</div>
-        <label>品項</label>
-        <input type="text" id="f_drink" value="${escapeHtml(d.drink)}">
-        <label class="sub-field">飲料超連結（選填）</label>
-        <input type="url" id="f_drinkLink" value="${escapeHtml(d.drinkLink)}" placeholder="https://...">
+        <div class="section-title" style="margin-top:20px">下午茶飲料</div>
+        <div class="field">
+          <label>品項</label>
+          <input type="text" id="f_drink" value="${escapeHtml(d.drink)}">
+        </div>
+        <div class="field field-sub">
+          <label class="sub-field">飲料超連結（選填）</label>
+          <input type="url" id="f_drinkLink" value="${escapeHtml(d.drinkLink)}" placeholder="https://...">
+        </div>
 
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>
         <button class="btn-secondary" id="clearDayBtn">清除本日品項</button>`;
@@ -394,10 +452,37 @@
     }
     if (id === 'orderLink'){
       return `
-        <label for="f_orderLink">訂餐系統按鈕連結</label>
-        <input type="url" id="f_orderLink" value="${escapeHtml(currentData.orderLink)}" placeholder="https://...">
+        <div class="field">
+          <label for="f_orderLink">訂餐系統按鈕連結</label>
+          <input type="url" id="f_orderLink" value="${escapeHtml(currentData.orderLink)}" placeholder="https://...">
+        </div>
         <div class="hint">此按鈕可以連動到揪團系統。</div>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
+    }
+    if (id === 'styles'){
+      const s = getStyles();
+      const section = (key, label) => `
+        <div class="section-title" style="margin-top:20px">${label}</div>
+        <div class="field field-sub">
+          <label class="sub-field">字級 (px)</label>
+          <input type="number" id="f_${key}Size" min="10" max="90" value="${s[key].fontSize}">
+        </div>
+        <div class="field field-sub">
+          <label class="sub-field">顏色</label>
+          <input type="color" id="f_${key}Color" value="${s[key].color}">
+        </div>
+        <div class="field field-sub">
+          <label class="sub-field">粗細</label>
+          <select id="f_${key}Bold">
+            <option value="1" ${s[key].bold ? 'selected' : ''}>粗體</option>
+            <option value="0" ${!s[key].bold ? 'selected' : ''}>一般</option>
+          </select>
+        </div>`;
+      return `
+        ${section('title', '標題（頁面主標題）')}
+        ${section('item', '品項（中餐／下午茶內容文字）')}
+        ${section('notes', '備註文字')}
+        <button class="btn-primary" id="applyBtn" style="margin-top:22px">儲存並返回選單</button>`;
     }
     return '';
   }
@@ -431,6 +516,20 @@
     } else if (id === 'orderLink'){
       document.getElementById('applyBtn').onclick = () => {
         currentData.orderLink = document.getElementById('f_orderLink').value.trim();
+        showMenu();
+      };
+    } else if (id === 'styles'){
+      document.getElementById('applyBtn').onclick = () => {
+        const read = (key) => ({
+          fontSize: parseFloat(document.getElementById(`f_${key}Size`).value) || DEFAULT_STYLES[key].fontSize,
+          color: document.getElementById(`f_${key}Color`).value,
+          bold: document.getElementById(`f_${key}Bold`).value === '1'
+        });
+        currentData.styles = {
+          title: read('title'),
+          item: read('item'),
+          notes: read('notes')
+        };
         showMenu();
       };
     }

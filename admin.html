@@ -323,11 +323,11 @@
 
     const otherItems = [
       { id: 'notes', title: '備註',
-        preview: (currentData.notes && currentData.notes.length) ? `共 ${currentData.notes.length} 條` : '（未設定）' },
+        preview: (currentData.notes && currentData.notes.length) ? `共 ${currentData.notes.length} 項` : '（未設定）' },
       { id: 'orderLink', title: '訂餐系統按鈕連結',
         preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
       { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
-      { id: 'password', title: '密碼設定', preview: '修改後台登入密碼' }
+      { id: 'password', title: '密碼設定 (Beta)', preview: '修改後台登入密碼' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
 
@@ -440,8 +440,8 @@
           <input type="text" id="f_lunch" value="${escapeHtml(d.lunch)}">
         </div>
         <div class="field field-sub">
-          <label class="sub-field">中餐超連結（選填）</label>
-          <input type="url" id="f_lunchLink" value="${escapeHtml(d.lunchLink)}" placeholder="https://...">
+          <label class="sub-field">超連結</label>
+          <input type="url" id="f_lunchLink" value="${escapeHtml(d.lunchLink)}" placeholder=" ">
         </div>
 
         <div class="section-title" style="margin-top:20px">下午茶飲料</div>
@@ -450,8 +450,8 @@
           <input type="text" id="f_drink" value="${escapeHtml(d.drink)}">
         </div>
         <div class="field field-sub">
-          <label class="sub-field">飲料超連結（選填）</label>
-          <input type="url" id="f_drinkLink" value="${escapeHtml(d.drinkLink)}" placeholder="https://...">
+          <label class="sub-field">超連結</label>
+          <input type="url" id="f_drinkLink" value="${escapeHtml(d.drinkLink)}" placeholder=" ">
         </div>
 
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>
@@ -499,7 +499,7 @@
     }
     if (id === 'password'){
       return `
-        <div class="hint" style="margin-top:0">這組密碼會存在 menu.json 裡，按選單的「儲存並發布」後才會真正同步到 GitHub，其他裝置讀取到新版菜單時就能用新密碼登入。</div>
+        <div class="hint" style="margin-top:0">原始密碼會預設儲存於瀏覽器的快取，修改密碼完成後按選單的「儲存並發布」才會同步到系統。</div>
         <div class="field">
           <label for="f_curPw">目前密碼</label>
           <input type="password" id="f_curPw" placeholder="請輸入目前密碼">

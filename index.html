@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>呷奔 | 一週菜單</title>
+<script>
+  // 在畫面渲染前先套用已儲存的主題設定，避免閃爍。預設為淺色模式。
+  (function(){
+    try{
+      if (localStorage.getItem('themePreference') === 'dark'){
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }catch(e){}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -16,6 +26,20 @@
     --gold: #C89A3C;
     --rose: #B85C6B;
     --line: rgba(43,29,34,0.12);
+    /* 固定強調色：無論深淺模式，「今日」卡片與揪團按鈕都維持一致的辨識度 */
+    --accent-bg: #5B2A46;
+    --accent-text: #FBF6EE;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"]{
+    --ink: #EAE1D5;
+    --paper: #1B1317;
+    --paper-soft: #251A20;
+    --plum: #F0DDBC;
+    --gold: #E0B563;
+    --rose: #E2919F;
+    --line: rgba(234,225,213,0.14);
+    color-scheme: dark;
   }
   *{ box-sizing: border-box; }
   body{
@@ -27,16 +51,33 @@
     font-family: 'Noto Sans TC', sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    transition: background-color .3s ease, color .3s ease;
   }
   .wrap{ max-width: 1180px; margin: 0 auto; padding: 56px 22px 60px; position: relative; }
 
-  .admin-link{
+  .top-actions{
     position: absolute; top: 22px; right: 22px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .admin-link{
     font-size: 12px; letter-spacing: 0.05em; color: var(--ink); opacity: .35;
     text-decoration: none; border: 1px solid var(--line); border-radius: 999px;
     padding: 5px 12px; transition: opacity .2s ease, border-color .2s ease;
   }
   .admin-link:hover{ opacity: .75; border-color: var(--gold); }
+
+  .theme-toggle{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; padding: 0;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: transparent; color: var(--ink); opacity: .5; cursor: pointer;
+    transition: opacity .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .theme-toggle:hover{ opacity: .9; border-color: var(--gold); }
+  .theme-toggle svg{ width: 15px; height: 15px; display: block; }
+  .theme-toggle .icon-moon{ display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun{ display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon{ display: block; }
 
   header{ text-align: center; margin-bottom: 52px; animation: fadeUp .7s ease both; }
   .eyebrow{
@@ -62,12 +103,12 @@
     padding: 30px 20px 34px; animation: fadeUp .7s ease both; transition: background .25s ease;
   }
   .day-card:hover{ background: var(--paper-soft); }
-  .day-card.is-today{ background: var(--plum); color: var(--paper); }
+  .day-card.is-today{ background: var(--accent-bg); color: var(--accent-text); }
   .day-card.is-today .num{ color: var(--gold); }
-  .day-card.is-today .day-name{ color: var(--paper); }
+  .day-card.is-today .day-name{ color: var(--accent-text); }
   .day-card.is-today .day-date{ color: rgba(251,246,238,0.6); }
   .day-card.is-today .item-label{ color: var(--gold); opacity: 1; }
-  .day-card.is-today .item-value{ color: var(--paper); }
+  .day-card.is-today .item-value{ color: var(--accent-text); }
   .day-card.is-today .divider{ background: rgba(251,246,238,0.18); }
   .day-card.is-today .icon{ color: var(--gold); }
   .day-card.is-today::before{
@@ -135,7 +176,7 @@
 
   .order-fab{
     position: fixed; right: 20px; bottom: 20px;
-    background: var(--plum); color: var(--paper);
+    background: var(--accent-bg); color: var(--accent-text);
     padding: 14px 22px; border-radius: 999px;
     font-size: 14px; font-weight: 700; text-decoration: none;
     display: inline-flex; align-items: center; gap: 8px;
@@ -154,7 +195,7 @@
   @media (max-width: 520px){
     .deck{ grid-template-columns: 1fr; }
     .legend{ flex-direction: column; align-items: center; gap: 10px; }
-    .admin-link{ position: static; display: inline-block; margin-bottom: 20px; }
+    .top-actions{ position: static; justify-content: center; margin-bottom: 20px; }
     .wrap{ padding-top: 40px; padding-bottom: 100px; }
     .footer-meta{ text-align: center; }
     .order-fab{ right: 16px; bottom: 16px; padding: 12px 18px; font-size: 13px; }
@@ -182,10 +223,23 @@
   <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
     <path d="M12 5v14M5 12h14"/>
   </symbol>
+  <symbol id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4.2"/>
+    <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+  </symbol>
+  <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+    <path d="M20.2 14.4A8.6 8.6 0 1 1 9.6 3.8a7 7 0 0 0 10.6 10.6Z"/>
+  </symbol>
 </svg>
 
 <div class="wrap">
-  <a class="admin-link" href="admin.html">登入</a>
+  <div class="top-actions">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深色模式">
+      <svg class="icon-sun"><use href="#icon-sun"/></svg>
+      <svg class="icon-moon"><use href="#icon-moon"/></svg>
+    </button>
+    <a class="admin-link" href="admin.html">登入</a>
+  </div>
 
   <header>
     <div class="eyebrow">LUNCH &amp; TEA TIME</div>
@@ -222,6 +276,20 @@
     { num: '肆', name: '週四' },
     { num: '伍', name: '週五' }
   ];
+
+  // ---------- 深色模式切換 ----------
+  (function(){
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark){
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+      try{ localStorage.setItem('themePreference', isDark ? 'light' : 'dark'); }catch(e){}
+    });
+  })();
 
   function pad2(n){ return String(n).padStart(2, '0'); }
 

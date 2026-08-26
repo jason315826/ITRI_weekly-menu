@@ -327,7 +327,7 @@
       { id: 'orderLink', title: '訂餐系統按鈕連結',
         preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
       { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
-      { id: 'password', title: '密碼設定 (Beta)', preview: '修改後台登入密碼' }
+      { id: 'password', title: '密碼設定', preview: '修改後台登入密碼' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
 

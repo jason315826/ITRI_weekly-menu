@@ -130,7 +130,7 @@
   <h1>後台管理 Admin Panel</h1>
   <div class="sub">呷奔｜專用系統</div>
 
-  <!-- 步驟 1：密碼登入 -->
+  <!-- 步驟 1：密碼登入（密碼存在 menu.json 裡，跨裝置共用） -->
   <div class="panel" id="loginPanel">
     <div class="field">
       <label for="pw">密碼</label>
@@ -138,6 +138,7 @@
     </div>
     <button class="btn-primary" id="loginBtn">登入</button>
     <div class="msg err" id="loginMsg"></div>
+    <div class="hint">預設密碼 itri18899，登入後可於選單中的「密碼設定」自行修改。這組密碼會存在 menu.json 裡並發布到 GitHub，所以任何裝置讀到同一份菜單都能用同一組密碼登入；若在其他裝置改過密碼，這台裝置要先用新密碼才能通過這一步。</div>
   </div>
 
   <!-- 步驟 2：GitHub 權杖 + 讀取菜單 -->
@@ -184,9 +185,8 @@
 </div>
 
 <script>
-  // ---- 這裡改你自己的後台密碼 ----
-  const ADMIN_PASSWORD = "itri18899";
   const DAY_NAMES = ['週一','週二','週三','週四','週五'];
+  const DEFAULT_PASSWORD = 'itri18899';
 
   const loginPanel = document.getElementById('loginPanel');
   const tokenPanel = document.getElementById('tokenPanel');
@@ -195,27 +195,28 @@
 
   let currentSha = null;
   let currentData = null;
+  let pendingPassword = null;
 
-  if (sessionStorage.getItem('menuAdminAuthed') === '1') {
-    showTokenPanel();
+  const savedToken = localStorage.getItem('menuAdminToken');
+  if (savedToken) document.getElementById('token').value = savedToken;
+
+  function getCachedPassword(){
+    return localStorage.getItem('menuAdminPwCache') || DEFAULT_PASSWORD;
+  }
+  function setCachedPassword(pw){
+    localStorage.setItem('menuAdminPwCache', pw);
   }
 
   document.getElementById('loginBtn').onclick = () => {
     const pw = document.getElementById('pw').value;
-    if (pw === ADMIN_PASSWORD) {
-      sessionStorage.setItem('menuAdminAuthed', '1');
-      showTokenPanel();
+    if (pw === getCachedPassword()) {
+      pendingPassword = pw;
+      loginPanel.classList.add('hidden');
+      tokenPanel.classList.remove('hidden');
     } else {
       showMsg('loginMsg', '密碼錯誤,請再試一次', false);
     }
   };
-
-  function showTokenPanel(){
-    loginPanel.classList.add('hidden');
-    tokenPanel.classList.remove('hidden');
-    const savedToken = localStorage.getItem('menuAdminToken');
-    if (savedToken) document.getElementById('token').value = savedToken;
-  }
 
   function showMsg(id, text, ok){
     const el = document.getElementById(id);
@@ -275,8 +276,20 @@
         if (d.lunchLink === undefined) d.lunchLink = '';
         if (d.drinkLink === undefined) d.drinkLink = '';
       });
-      tokenPanel.classList.add('hidden');
-      showMenu();
+      if (!currentData.password) currentData.password = DEFAULT_PASSWORD;
+
+      // 用 GitHub 上真正的密碼做最終確認，並讓本機快取的密碼保持最新
+      if (pendingPassword === currentData.password) {
+        setCachedPassword(currentData.password);
+        tokenPanel.classList.add('hidden');
+        showMenu();
+      } else {
+        setCachedPassword(currentData.password);
+        tokenPanel.classList.add('hidden');
+        loginPanel.classList.remove('hidden');
+        document.getElementById('pw').value = '';
+        showMsg('loginMsg', '密碼已在其他裝置更新，請輸入最新密碼再登入一次', false);
+      }
     }catch(err){
       showMsg('tokenMsg', '連線失敗：' + err.message, false);
     }
@@ -313,7 +326,8 @@
         preview: (currentData.notes && currentData.notes.length) ? `共 ${currentData.notes.length} 條` : '（未設定）' },
       { id: 'orderLink', title: '訂餐系統按鈕連結',
         preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
-      { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' }
+      { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
+      { id: 'password', title: '密碼設定', preview: '修改後台登入密碼' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
 
@@ -342,8 +356,6 @@
   };
 
   document.getElementById('logoutBtn').onclick = () => {
-    sessionStorage.removeItem('menuAdminAuthed');
-    localStorage.removeItem('menuAdminToken');
     location.reload();
   };
 
@@ -404,6 +416,7 @@
     if (id === 'notes') return '備註';
     if (id === 'orderLink') return '訂餐系統按鈕連結';
     if (id === 'styles') return '文字樣式設定';
+    if (id === 'password') return '密碼設定';
     return '';
   }
 
@@ -484,6 +497,24 @@
         ${section('notes', '備註文字')}
         <button class="btn-primary" id="applyBtn" style="margin-top:22px">儲存並返回選單</button>`;
     }
+    if (id === 'password'){
+      return `
+        <div class="hint" style="margin-top:0">這組密碼會存在 menu.json 裡，按選單的「儲存並發布」後才會真正同步到 GitHub，其他裝置讀取到新版菜單時就能用新密碼登入。</div>
+        <div class="field">
+          <label for="f_curPw">目前密碼</label>
+          <input type="password" id="f_curPw" placeholder="請輸入目前密碼">
+        </div>
+        <div class="field">
+          <label for="f_newPw1">新密碼</label>
+          <input type="password" id="f_newPw1" placeholder="請輸入新密碼">
+        </div>
+        <div class="field">
+          <label for="f_newPw2">確認新密碼</label>
+          <input type="password" id="f_newPw2" placeholder="請再輸入一次新密碼">
+        </div>
+        <button class="btn-primary" id="applyPwBtn">更新密碼</button>
+        <div class="msg" id="pwMsg"></div>`;
+    }
     return '';
   }
 
@@ -531,6 +562,26 @@
           notes: read('notes')
         };
         showMenu();
+      };
+    } else if (id === 'password'){
+      document.getElementById('applyPwBtn').onclick = () => {
+        const cur = document.getElementById('f_curPw').value;
+        const new1 = document.getElementById('f_newPw1').value;
+        const new2 = document.getElementById('f_newPw2').value;
+        const showPwMsg = (text, ok) => {
+          const el = document.getElementById('pwMsg');
+          el.textContent = text;
+          el.className = 'msg show ' + (ok ? 'ok' : 'err');
+        };
+        if (cur !== (currentData.password || DEFAULT_PASSWORD)) { showPwMsg('目前密碼不正確', false); return; }
+        if (!new1) { showPwMsg('請輸入新密碼', false); return; }
+        if (new1 !== new2) { showPwMsg('兩次輸入的新密碼不一致', false); return; }
+        currentData.password = new1;
+        setCachedPassword(new1);
+        showPwMsg('密碼已更新，記得按「儲存並發布」才會同步到 GitHub', true);
+        document.getElementById('f_curPw').value = '';
+        document.getElementById('f_newPw1').value = '';
+        document.getElementById('f_newPw2').value = '';
       };
     }
   }

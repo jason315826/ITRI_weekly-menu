@@ -160,11 +160,11 @@
 
   <!-- 步驟 3：選單 -->
   <div class="panel hidden" id="menuPanel">
-    <div class="menu-group-title">本週設定</div>
+    <div class="menu-group-title">(一)、起始日期設定</div>
     <ul class="menu-list" id="menuListTop"></ul>
-    <div class="menu-group-title">每日菜單</div>
+    <div class="menu-group-title">(二)、每日菜單維護</div>
     <ul class="menu-list" id="menuListDays"></ul>
-    <div class="menu-group-title">其他</div>
+    <div class="menu-group-title">(三)、其他</div>
     <ul class="menu-list" id="menuListOther"></ul>
 
     <div class="row">
@@ -294,7 +294,7 @@
     document.getElementById('saveMsg').className = 'msg';
 
     const topItems = [
-      { id: 'weekStart', title: '本週「週一」日期',
+      { id: 'weekStart', title: '本週「週一」的日期',
         preview: currentData.weekStart ? currentData.weekStart : '（未設定）' }
     ];
     document.getElementById('menuListTop').innerHTML = topItems.map(renderMenuItem).join('');
@@ -446,7 +446,7 @@
     }
     if (id === 'notes'){
       return `
-        <label for="f_notes">備註（每行一條）</label>
+        <label for="f_notes">每一行請列為一項提醒事項；如同一項提醒事項需分行呈現，請使用鍵盤 Shift + Enter 進行換行。</label>
         <textarea id="f_notes" placeholder="（一）、當日菜單請以群組為主。">${escapeHtml((currentData.notes || []).join('\n'))}</textarea>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
     }
@@ -456,7 +456,7 @@
           <label for="f_orderLink">訂餐系統按鈕連結</label>
           <input type="url" id="f_orderLink" value="${escapeHtml(currentData.orderLink)}" placeholder="https://...">
         </div>
-        <div class="hint">此按鈕可以連動到揪團系統。</div>
+        <div class="hint">此按鈕可連結至揪團系統。</div>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
     }
     if (id === 'styles'){

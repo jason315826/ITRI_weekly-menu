@@ -96,6 +96,25 @@
   .legend span{ display:flex; align-items:center; gap:6px; }
   .legend svg{ width:16px; height:16px; }
 
+  .live-clock{
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 12px; padding: 6px 16px;
+    border: 1px solid var(--line); border-radius: 999px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13px; letter-spacing: 0.04em; color: var(--ink); opacity: .7;
+    font-variant-numeric: tabular-nums;
+  }
+  .live-clock .clock-dot{ opacity: .4; }
+  .live-clock #clockTime{ font-weight: 700; color: var(--rose); }
+  .live-clock .clock-tz{
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 11px; letter-spacing: 0.06em; opacity: .6;
+    border-left: 1px solid var(--line); padding-left: 8px; margin-left: 2px;
+  }
+  @media (max-width: 520px){
+    .live-clock{ font-size: 12px; padding: 5px 14px; }
+  }
+
   .deck{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .day-card{
     position: relative; background: var(--paper);
@@ -245,6 +264,12 @@
     <div class="eyebrow">LUNCH &amp; TEA TIME</div>
     <h1>大家作伙來呷奔</h1>
     <div class="date-range" id="dateRange">載入中…</div>
+    <div class="live-clock" id="liveClock">
+      <span id="clockDate">--</span>
+      <span class="clock-dot">·</span>
+      <span id="clockTime">--:--:--</span>
+      <span class="clock-tz" id="clockTz">--</span>
+    </div>
     <div class="legend">
       <span><svg class="icon"><use href="#icon-bowl"/></svg>中餐</span>
       <span><svg class="icon"><use href="#icon-cup"/></svg>下午茶飲料</span>
@@ -289,6 +314,35 @@
       }
       try{ localStorage.setItem('themePreference', isDark ? 'light' : 'dark'); }catch(e){}
     });
+  })();
+
+  // ---------- 即時時鐘 ----------
+  (function(){
+    const dateEl = document.getElementById('clockDate');
+    const timeEl = document.getElementById('clockTime');
+    const tzEl = document.getElementById('clockTz');
+    const WEEKDAY = ['日','一','二','三','四','五','六'];
+
+    // 顯示台灣時區時間；同時標示使用者瀏覽器實際所在時區
+    const TARGET_TZ = 'Asia/Taipei';
+    let localTzLabel = TARGET_TZ === Intl.DateTimeFormat().resolvedOptions().timeZone
+      ? 'Taiwan Time' : `Taiwan Time (browser: ${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
+    tzEl.textContent = localTzLabel;
+
+    function tick(){
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('zh-TW', {
+        timeZone: TARGET_TZ,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        weekday: 'short', hour12: false
+      }).formatToParts(now).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+
+      dateEl.textContent = `${parts.year}/${parts.month}/${parts.day}（${WEEKDAY[new Date(now.toLocaleString('en-US', {timeZone: TARGET_TZ})).getDay()]}）`;
+      timeEl.textContent = `${parts.hour}:${parts.minute}:${parts.second}`;
+    }
+    tick();
+    setInterval(tick, 1000);
   })();
 
   function pad2(n){ return String(n).padStart(2, '0'); }

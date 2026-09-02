@@ -207,6 +207,78 @@
   .order-fab svg{ width: 17px; height: 17px; }
 
   .loading{ text-align:center; padding: 60px 0; opacity:.5; font-size:14px; }
+
+  /* ---------- 轉盤：今天吃什麼 ---------- */
+  .wheel-fab{
+    position: fixed; left: 20px; bottom: 20px;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--accent-bg); color: var(--accent-text);
+    border: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 24px rgba(43,23,40,0.32);
+    transition: transform .2s ease, box-shadow .2s ease;
+    z-index: 50;
+  }
+  .wheel-fab:hover{ transform: translateY(-3px) rotate(18deg); box-shadow: 0 14px 30px rgba(43,23,40,0.4); }
+  .wheel-fab svg{ width: 28px; height: 28px; }
+
+  .wheel-overlay{
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(20,12,16,0.55); backdrop-filter: blur(2px);
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .wheel-overlay.open{ display: flex; }
+  .wheel-modal{
+    position: relative; width: 100%; max-width: 340px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 18px;
+    padding: 28px 22px 26px; text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    animation: fadeUp .35s ease both;
+  }
+  .wheel-close{
+    position: absolute; top: 12px; right: 14px;
+    background: none; border: none; font-size: 16px; line-height: 1;
+    color: var(--ink); opacity: .45; cursor: pointer; padding: 6px;
+  }
+  .wheel-close:hover{ opacity: .9; }
+  .wheel-modal-title{
+    font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 20px;
+    color: var(--plum); margin-bottom: 18px;
+  }
+  .wheel-stage{
+    position: relative; width: 240px; height: 240px; margin: 0 auto;
+  }
+  .wheel-pointer{
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; z-index: 3;
+    border-left: 11px solid transparent; border-right: 11px solid transparent;
+    border-top: 18px solid var(--gold);
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25));
+  }
+  .wheel-canvas{
+    display: block; border-radius: 50%;
+    box-shadow: 0 0 0 5px var(--paper), 0 0 0 6px var(--line), 0 14px 28px rgba(0,0,0,0.22);
+  }
+  .wheel-spin-btn{
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 62px; height: 62px; border-radius: 50%; z-index: 2;
+    background: var(--accent-bg); color: var(--accent-text);
+    border: 3px solid var(--paper); font-family: 'Noto Serif TC', serif;
+    font-weight: 900; font-size: 14px; letter-spacing: 0.05em; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    transition: transform .15s ease;
+  }
+  .wheel-spin-btn:hover{ transform: translate(-50%, -50%) scale(1.06); }
+  .wheel-spin-btn:disabled{ opacity: .7; cursor: not-allowed; transform: translate(-50%, -50%); }
+  .wheel-result{
+    min-height: 24px; margin-top: 20px;
+    font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 17px;
+    color: var(--rose);
+  }
+  .wheel-empty{ margin-top: 16px; font-size: 13px; opacity: .55; line-height: 1.7; }
+  @media (max-width: 380px){
+    .wheel-stage{ width: 210px; height: 210px; }
+  }
   @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
   :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
@@ -292,6 +364,28 @@
   <svg><use href="#icon-plus"/></svg>
   開始揪團
 </a>
+
+<button class="wheel-fab" id="wheelFab" type="button" title="今天吃什麼？轉一下">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="9"/>
+    <path d="M12 3v9l6.2 3.6M12 3a9 9 0 0 1 7.79 4.5M12 21a9 9 0 0 1-7.79-13.5"/>
+    <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>
+  </svg>
+</button>
+
+<div class="wheel-overlay" id="wheelOverlay">
+  <div class="wheel-modal">
+    <button class="wheel-close" id="wheelClose" type="button" aria-label="關閉">✕</button>
+    <div class="wheel-modal-title">今天吃什麼？</div>
+    <div class="wheel-stage" id="wheelStage">
+      <div class="wheel-pointer"></div>
+      <canvas class="wheel-canvas" id="wheelCanvas"></canvas>
+      <button class="wheel-spin-btn" id="wheelSpinBtn" type="button">SPIN</button>
+    </div>
+    <div class="wheel-result" id="wheelResult"></div>
+    <div class="wheel-empty" id="wheelEmpty" style="display:none">尚未設定轉盤選項，請至後台的「轉盤選項」新增內容。</div>
+  </div>
+</div>
 
 <script>
   const DAY_META = [
@@ -446,11 +540,134 @@
         fab.href = data.orderLink;
         fab.style.display = 'inline-flex';
       }
+
+      wheelOptions = Array.isArray(data.wheelOptions) ? data.wheelOptions.filter(s => (s || '').trim()) : [];
     }catch(err){
       document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗,請稍後再試</div>';
     }
   }
   loadMenu();
+
+  // ---------- 轉盤：今天吃什麼 ----------
+  let wheelOptions = [];
+  let wheelDrawn = false;
+  let wheelSpinning = false;
+  let wheelTotalRotation = 0;
+  const WHEEL_SIZE = 240;
+  const WHEEL_COLORS = ['#5B2A46', '#C89A3C', '#B85C6B', '#4C7A5C', '#2B1728', '#E0B563', '#8B4A63', '#7A8F6B'];
+
+  const wheelFab = document.getElementById('wheelFab');
+  const wheelOverlay = document.getElementById('wheelOverlay');
+  const wheelClose = document.getElementById('wheelClose');
+  const wheelCanvas = document.getElementById('wheelCanvas');
+  const wheelSpinBtn = document.getElementById('wheelSpinBtn');
+  const wheelResult = document.getElementById('wheelResult');
+  const wheelEmpty = document.getElementById('wheelEmpty');
+  const wheelStage = document.getElementById('wheelStage');
+
+  function setupWheelCanvas(){
+    const dpr = window.devicePixelRatio || 1;
+    const size = wheelStage.offsetWidth || WHEEL_SIZE;
+    wheelCanvas.width = size * dpr;
+    wheelCanvas.height = size * dpr;
+    wheelCanvas.style.width = size + 'px';
+    wheelCanvas.style.height = size + 'px';
+    const ctx = wheelCanvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, size };
+  }
+
+  function drawWheel(){
+    const { ctx, size } = setupWheelCanvas();
+    const cx = size / 2, cy = size / 2, radius = size / 2 - 3;
+    ctx.clearRect(0, 0, size, size);
+    const n = wheelOptions.length;
+    if (!n) return;
+    const seg = 360 / n;
+    for (let i = 0; i < n; i++){
+      const startDeg = i * seg - 90;
+      const endDeg = (i + 1) * seg - 90;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, startDeg * Math.PI / 180, endDeg * Math.PI / 180);
+      ctx.closePath();
+      ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(251,246,238,0.55)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const midRad = (startDeg + seg / 2) * Math.PI / 180;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(midRad);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#FBF6EE';
+      const fontSize = Math.max(11, Math.min(15, 170 / n));
+      ctx.font = '600 ' + fontSize + 'px "Noto Sans TC", sans-serif';
+      let label = wheelOptions[i];
+      const maxChars = Math.max(4, Math.floor((radius - 16) / (fontSize * 0.62)));
+      if (label.length > maxChars) label = label.slice(0, maxChars - 1) + '…';
+      ctx.fillText(label, radius - 14, 0);
+      ctx.restore();
+    }
+  }
+
+  function openWheel(){
+    wheelOverlay.classList.add('open');
+    if (!wheelOptions.length){
+      wheelStage.style.display = 'none';
+      wheelResult.style.display = 'none';
+      wheelEmpty.style.display = 'block';
+      return;
+    }
+    wheelStage.style.display = '';
+    wheelResult.style.display = '';
+    wheelEmpty.style.display = 'none';
+    if (!wheelDrawn){
+      drawWheel();
+      wheelDrawn = true;
+    }
+  }
+
+  function closeWheel(){
+    wheelOverlay.classList.remove('open');
+  }
+
+  function spinWheel(){
+    if (wheelSpinning || !wheelOptions.length) return;
+    wheelSpinning = true;
+    wheelSpinBtn.disabled = true;
+    wheelResult.textContent = '';
+
+    const n = wheelOptions.length;
+    const seg = 360 / n;
+    const idx = Math.floor(Math.random() * n);
+    const jitter = (Math.random() - 0.5) * seg * 0.6;
+    const centerDeg = idx * seg + seg / 2 + jitter;
+
+    const currentMod = wheelTotalRotation % 360;
+    const neededMod = (360 - centerDeg + 360) % 360;
+    let delta = neededMod - currentMod;
+    if (delta <= 0) delta += 360;
+    const extraSpins = (6 + Math.floor(Math.random() * 3)) * 360;
+    wheelTotalRotation += extraSpins + delta;
+
+    wheelCanvas.style.transition = 'transform 4.2s cubic-bezier(0.17,0.67,0.32,1.01)';
+    wheelCanvas.style.transform = `rotate(${wheelTotalRotation}deg)`;
+
+    setTimeout(() => {
+      wheelSpinning = false;
+      wheelSpinBtn.disabled = false;
+      wheelResult.textContent = '就決定是「' + wheelOptions[idx] + '」了！';
+    }, 4300);
+  }
+
+  wheelFab.addEventListener('click', openWheel);
+  wheelClose.addEventListener('click', closeWheel);
+  wheelOverlay.addEventListener('click', (e) => { if (e.target === wheelOverlay) closeWheel(); });
+  wheelSpinBtn.addEventListener('click', spinWheel);
 </script>
 
 </body>

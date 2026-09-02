@@ -341,6 +341,7 @@
         if (d.drinkLink === undefined) d.drinkLink = '';
       });
       if (!currentData.password) currentData.password = DEFAULT_PASSWORD;
+      if (!Array.isArray(currentData.wheelOptions)) currentData.wheelOptions = [];
 
       // 用 GitHub 上真正的密碼做最終確認，並讓本機快取的密碼保持最新
       if (pendingPassword === currentData.password) {
@@ -391,6 +392,8 @@
       { id: 'orderLink', title: '訂餐系統按鈕連結',
         preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
       { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
+      { id: 'wheelOptions', title: '轉盤選項（今天吃什麼）',
+        preview: (currentData.wheelOptions && currentData.wheelOptions.length) ? `共 ${currentData.wheelOptions.length} 項` : '（未設定）' },
       { id: 'password', title: '密碼設定', preview: '修改後台登入密碼' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
@@ -480,6 +483,7 @@
     if (id === 'notes') return '備註';
     if (id === 'orderLink') return '訂餐系統按鈕連結';
     if (id === 'styles') return '文字樣式設定';
+    if (id === 'wheelOptions') return '轉盤選項（今天吃什麼）';
     if (id === 'password') return '密碼設定';
     return '';
   }
@@ -561,6 +565,15 @@
         ${section('notes', '備註文字')}
         <button class="btn-primary" id="applyBtn" style="margin-top:22px">儲存並返回選單</button>`;
     }
+    if (id === 'wheelOptions'){
+      const list = (currentData.wheelOptions || []).join('\n');
+      return `
+        <label for="f_wheelOptions">每一行請列為一個轉盤選項，首頁的轉盤將依此清單顯示（建議 3～10 項，太多項文字會擁擠）。</label>
+        <textarea id="f_wheelOptions" placeholder="例如：\n八方雲集\n竹美港式燒臘\n麥當勞">${escapeHtml(list)}</textarea>
+        <button class="btn-secondary" id="importFromMenuBtn" style="margin-top:14px">從本週菜單匯入中餐品項</button>
+        <div class="hint">匯入會把本週五天中餐（不重複、忽略未設定）加入清單，已存在的品項不會重複加入。</div>
+        <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
+    }
     if (id === 'password'){
       return `
         <div class="hint" style="margin-top:0">原始密碼會預設儲存於瀏覽器的快取，修改密碼完成後按選單的「儲存並發布」才會同步到系統。</div>
@@ -626,6 +639,25 @@
           notes: read('notes')
         };
         showMenu();
+      };
+    } else if (id === 'wheelOptions'){
+      document.getElementById('applyBtn').onclick = () => {
+        currentData.wheelOptions = document.getElementById('f_wheelOptions').value
+          .split('\n').map(s => s.trim()).filter(Boolean);
+        showMenu();
+      };
+      document.getElementById('importFromMenuBtn').onclick = () => {
+        const ta = document.getElementById('f_wheelOptions');
+        const existing = ta.value.split('\n').map(s => s.trim()).filter(Boolean);
+        const seen = new Set(existing);
+        (currentData.days || []).forEach(d => {
+          const name = (d.lunch || '').trim();
+          if (name && !seen.has(name)){
+            seen.add(name);
+            existing.push(name);
+          }
+        });
+        ta.value = existing.join('\n');
       };
     } else if (id === 'password'){
       document.getElementById('applyPwBtn').onclick = () => {

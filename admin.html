@@ -421,9 +421,9 @@
       { id: 'orderLink', title: '訂餐系統按鈕連結',
         preview: currentData.orderLink ? truncate(currentData.orderLink, 34) : '（未設定）' },
       { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
-      { id: 'wheelOptions', title: '轉盤選項（今天吃什麼）',
+      { id: 'wheelOptions', title: '轉盤選項',
         preview: (currentData.wheelOptions && currentData.wheelOptions.length) ? `共 ${currentData.wheelOptions.length} 項` : '（未設定）' },
-      { id: 'announcements', title: '緊急公告（彈幕通知）',
+      { id: 'announcements', title: '緊急公告',
         preview: (() => {
           const list = currentData.announcements || [];
           const activeCount = list.filter(a => a.active).length;
@@ -731,7 +731,7 @@
   function announcementsBodyHtml(){
     const rows = workingAnnouncements.map((a, i) => `
       <div class="ann-row">
-        <textarea class="ann-text" data-idx="${i}" placeholder="請輸入公告內容，例如：因園區停電，今日餐點暫停配送">${escapeHtml(a.text)}</textarea>
+        <textarea class="ann-text" data-idx="${i}" placeholder="請輸入欲發布的公告內容。">${escapeHtml(a.text)}</textarea>
         <div class="ann-row-actions">
           <label class="ann-toggle">
             <input type="checkbox" class="ann-active" data-idx="${i}" ${a.active ? 'checked' : ''}>
@@ -741,7 +741,7 @@
         </div>
       </div>`).join('');
     return `
-      <div class="hint" style="margin-top:0">緊急公告會以彈幕（跑馬燈）形式顯示在首頁最上方，使用者可自行按右上角 ✕ 關閉當次顯示。可新增多則、個別開關、編輯或刪除。</div>
+      <div class="hint" style="margin-top:0">緊急公告會以彈幕（跑馬燈）形式顯示於首頁最上方，使用者可點選「✕」關閉當次顯示。公告可新增多則，並支援個別開關、編輯及刪除。</div>
       <div id="annList">${rows || '<div class="ann-empty">目前尚無公告，請按下方新增一則。</div>'}</div>
       <button class="btn-secondary" id="addAnnBtn" type="button" style="margin-top:14px">＋ 新增一則公告</button>
       <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;

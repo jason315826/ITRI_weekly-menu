@@ -741,7 +741,7 @@
         </div>
       </div>`).join('');
     return `
-      <div class="hint" style="margin-top:0">緊急公告會以彈幕（跑馬燈）形式顯示於首頁最上方，使用者可點選「✕」關閉當次顯示。公告可新增多則，並支援個別開關、編輯及刪除。</div>
+      <div class="hint" style="margin-top:0">緊急公告會在使用者開啟首頁時，以「置中彈出視窗」顯示，使用者可點選「✕」關閉當次顯示，關閉後仍可透過首頁左上角的「緊急公告」按鈕隨時重新開啟。公告可新增多則，並支援個別開關、編輯及刪除。</div>
       <div id="annList">${rows || '<div class="ann-empty">目前尚無公告，請按下方新增一則。</div>'}</div>
       <button class="btn-secondary" id="addAnnBtn" type="button" style="margin-top:14px">＋ 新增一則公告</button>
       <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
@@ -789,6 +789,32 @@
       showMenu();
     };
   }
+
+  // ---------- Enter 鍵 = 下一步 ----------
+  // 任何單行輸入框（不含 textarea，因為換行需要用到 Enter）按下 Enter：
+  // 若同一面板內還有下一個輸入框，就移動焦點過去；若已經是最後一個，就觸發該面板的主要按鈕。
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const el = e.target;
+    if (!el || el.tagName !== 'INPUT') return;
+    if (el.type === 'checkbox' || el.type === 'radio' || el.type === 'button') return;
+
+    e.preventDefault();
+
+    const container = el.closest('.panel') || document;
+    const fields = Array.from(container.querySelectorAll('input'))
+      .filter(i => i.type !== 'checkbox' && i.type !== 'radio' && i.type !== 'button' && i.offsetParent !== null);
+    const idx = fields.indexOf(el);
+
+    if (idx > -1 && idx < fields.length - 1){
+      const next = fields[idx + 1];
+      next.focus();
+      if (typeof next.select === 'function') next.select();
+    } else {
+      const btn = container.querySelector('button.btn-primary');
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
 </script>
 
 </body>

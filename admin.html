@@ -605,10 +605,10 @@
     if (id === 'wheelOptions'){
       const list = (currentData.wheelOptions || []).join('\n');
       return `
-        <label for="f_wheelOptions">每一行請列為一個轉盤選項，首頁的轉盤將依此清單顯示（建議 3～10 項，太多項文字會擁擠）。</label>
+        <label for="f_wheelOptions">每一行請列為一個轉盤選項，首頁的轉盤將依此清單顯示。</label>
         <textarea id="f_wheelOptions" placeholder="例如：\n八方雲集\n竹美港式燒臘\n麥當勞">${escapeHtml(list)}</textarea>
-        <button class="btn-secondary" id="importFromMenuBtn" style="margin-top:14px">從本週菜單匯入中餐品項</button>
-        <div class="hint">匯入會把本週五天中餐（不重複、忽略未設定）加入清單，已存在的品項不會重複加入。</div>
+        <button class="btn-secondary" id="importFromMenuBtn" style="margin-top:14px">匯入本週菜單選項</button>
+        <div class="hint">匯入本週五天中餐，重複品項及未設定餐點將自動排除，已存在於清單中的品項不會重複加入。</div>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
     }
     if (id === 'announcements'){

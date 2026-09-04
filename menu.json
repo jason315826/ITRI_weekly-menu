@@ -6,7 +6,7 @@
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-04T11:46:32.051Z",
+  "lastUpdated": "2026-09-04T11:56:07.042Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
@@ -44,7 +44,7 @@
   "announcements": [
     {
       "id": "ann_mtmw1rpfmn36",
-      "text": "測試",
+      "text": "特別通知：9/7（一）中餐及下午茶團購暫停一天，造成您的不便，敬請見諒。",
       "active": true,
       "createdAt": "2026-09-04T11:46:24.003Z"
     }

@@ -1,5 +1,5 @@
 {
-  "weekStart": "2026-08-31",
+  "weekStart": "2026-09-07",
   "notes": [
     "（一）、重置菜單內容為每週五的下班時間，如果您有推薦的餐食，請在Teams留言。",
     "（二）、實際品項請以當日Teams呷奔群組公告為主，不定時有下午茶訂購，若有問題請在群組留言。",
@@ -7,38 +7,38 @@
     "（四）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（五）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-04T01:53:40.079Z",
+  "lastUpdated": "2026-09-04T11:03:11.443Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
-      "lunch": "八方雲集",
-      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260831-2UOZZW",
-      "drink": "",
-      "drinkLink": ""
-    },
-    {
-      "lunch": "竹美港式燒臘",
-      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260831-CFNN6N",
-      "drink": "",
-      "drinkLink": ""
-    },
-    {
-      "lunch": "麥當勞",
+      "lunch": "",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "上野烤肉飯",
-      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260902-N1C6IX",
-      "drink": "大茗本位製茶堂",
-      "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260902-DSUG33"
+      "lunch": "",
+      "lunchLink": "",
+      "drink": "",
+      "drinkLink": ""
     },
     {
-      "lunch": "有飯時光",
-      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260903-PE45J6",
-      "drink": "林三茶研所",
-      "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260904-HGKJH1"
+      "lunch": "",
+      "lunchLink": "",
+      "drink": "",
+      "drinkLink": ""
+    },
+    {
+      "lunch": "",
+      "lunchLink": "",
+      "drink": "",
+      "drinkLink": ""
+    },
+    {
+      "lunch": "",
+      "lunchLink": "",
+      "drink": "",
+      "drinkLink": ""
     }
   ],
   "wheelOptions": [

@@ -279,6 +279,43 @@
   @media (max-width: 380px){
     .wheel-stage{ width: 210px; height: 210px; }
   }
+
+  /* ---------- 緊急公告彈幕 ---------- */
+  .danmaku-bar{
+    display: none; position: sticky; top: 0; z-index: 60;
+    background: linear-gradient(180deg, rgba(43,23,29,0.94), rgba(43,23,29,0.88));
+    border-bottom: 2px solid var(--gold);
+    padding: 8px 46px 8px 0;
+  }
+  .danmaku-rows{ display: flex; flex-direction: column; gap: 4px; }
+  .danmaku-row{ position: relative; height: 24px; overflow: hidden; }
+  .danmaku-text{
+    position: absolute; top: 0; left: 0; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; color: #FBF6EE;
+    transform: translateX(100vw);
+    animation-name: danmaku-scroll; animation-timing-function: linear; animation-iteration-count: infinite;
+  }
+  .danmaku-text .tag{
+    flex: 0 0 auto; background: var(--rose); color: #2B1317;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 2px 9px; border-radius: 999px;
+  }
+  @keyframes danmaku-scroll{
+    from{ transform: translateX(100vw); }
+    to{ transform: translateX(-100%); }
+  }
+  .danmaku-close{
+    position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+    width: 26px; height: 26px; border-radius: 50%; z-index: 2;
+    background: rgba(255,255,255,0.14); border: none; color: #FBF6EE;
+    font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .danmaku-close:hover{ background: rgba(255,255,255,0.26); }
+  @media (prefers-reduced-motion: reduce){
+    .danmaku-text{ animation: none; position: static; transform: none; white-space: normal; }
+  }
   @keyframes fadeUp{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce){ *{ animation: none !important; transition: none !important; } }
   :focus-visible{ outline: 2px solid var(--gold); outline-offset: 3px; }
@@ -322,6 +359,11 @@
     <path d="M20.2 14.4A8.6 8.6 0 1 1 9.6 3.8a7 7 0 0 0 10.6 10.6Z"/>
   </symbol>
 </svg>
+
+<div class="danmaku-bar" id="danmakuBar">
+  <button class="danmaku-close" id="danmakuClose" type="button" aria-label="關閉公告">✕</button>
+  <div class="danmaku-rows" id="danmakuRows"></div>
+</div>
 
 <div class="wrap">
   <div class="top-actions">
@@ -380,7 +422,7 @@
     <div class="wheel-stage" id="wheelStage">
       <div class="wheel-pointer"></div>
       <canvas class="wheel-canvas" id="wheelCanvas"></canvas>
-      <button class="wheel-spin-btn" id="wheelSpinBtn" type="button">抽獎</button>
+      <button class="wheel-spin-btn" id="wheelSpinBtn" type="button">SPIN</button>
     </div>
     <div class="wheel-result" id="wheelResult"></div>
     <div class="wheel-empty" id="wheelEmpty" style="display:none">尚未設定轉盤選項，請至後台的「轉盤選項」新增內容。</div>
@@ -542,11 +584,56 @@
       }
 
       wheelOptions = Array.isArray(data.wheelOptions) ? data.wheelOptions.filter(s => (s || '').trim()) : [];
+      renderDanmaku(Array.isArray(data.announcements) ? data.announcements : []);
     }catch(err){
       document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗,請稍後再試</div>';
     }
   }
   loadMenu();
+
+  // ---------- 緊急公告彈幕 ----------
+  function escapeHtmlBasic(s){
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderDanmaku(list){
+    const bar = document.getElementById('danmakuBar');
+    const rows = document.getElementById('danmakuRows');
+    const active = (list || []).filter(a => a && a.active && (a.text || '').trim());
+
+    if (!active.length){
+      bar.style.display = 'none';
+      return;
+    }
+
+    // 使用者本次瀏覽若已關閉「完全相同」的公告內容，就不再顯示；公告一有變動就會重新出現
+    const sig = active.map(a => a.id || a.text).join('|');
+    let dismissed = '';
+    try{ dismissed = sessionStorage.getItem('danmakuDismissed') || ''; }catch(e){}
+    if (dismissed === sig){
+      bar.style.display = 'none';
+      return;
+    }
+
+    rows.innerHTML = active.map(a => {
+      const text = a.text.trim();
+      const dur = Math.max(9, Math.min(30, text.length * 0.45 + 8));
+      const delay = -(Math.random() * dur).toFixed(2);
+      return `
+        <div class="danmaku-row">
+          <span class="danmaku-text" style="animation-duration:${dur}s; animation-delay:${delay}s;">
+            <span class="tag">緊急公告</span>${escapeHtmlBasic(text)}
+          </span>
+        </div>`;
+    }).join('');
+
+    bar.style.display = 'block';
+
+    document.getElementById('danmakuClose').onclick = () => {
+      bar.style.display = 'none';
+      try{ sessionStorage.setItem('danmakuDismissed', sig); }catch(e){}
+    };
+  }
 
   // ---------- 轉盤：今天吃什麼 ----------
   let wheelOptions = [];

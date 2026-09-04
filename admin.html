@@ -160,6 +160,34 @@
     font-family: 'Noto Serif TC', serif; font-weight: 900; font-size: 20px;
     color: var(--plum); margin: 0 0 20px;
   }
+
+  /* ---- announcements (danmaku) editor ---- */
+  .ann-row{
+    border: 1px solid var(--line); border-radius: 10px; padding: 14px;
+    margin-top: 12px; background: var(--paper-soft);
+  }
+  .ann-row:first-child{ margin-top: 0; }
+  .ann-row textarea.ann-text{
+    width:100%; min-height:56px; padding: 10px 12px; border: 1px solid var(--line);
+    border-radius: 8px; font-size: 14px; font-family: inherit; line-height:1.6;
+    background: var(--panel-bg); color: var(--ink); resize: vertical;
+  }
+  .ann-row-actions{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top: 10px;
+  }
+  .ann-toggle{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size: 13px; opacity:.75; cursor:pointer; user-select:none;
+  }
+  .ann-toggle input{ width:15px; height:15px; cursor:pointer; }
+  .ann-delete{
+    width:auto; margin:0; padding: 6px 12px; font-size: 12px; font-weight:500;
+    background: transparent; color: var(--red); border: 1px solid rgba(184,69,60,0.35);
+    border-radius: 999px;
+  }
+  .ann-delete:hover{ opacity: 1; background: rgba(184,69,60,0.08); }
+  .ann-empty{ font-size: 13px; opacity:.5; padding: 6px 2px; }
 </style>
 </head>
 <body>
@@ -342,6 +370,7 @@
       });
       if (!currentData.password) currentData.password = DEFAULT_PASSWORD;
       if (!Array.isArray(currentData.wheelOptions)) currentData.wheelOptions = [];
+      if (!Array.isArray(currentData.announcements)) currentData.announcements = [];
 
       // 用 GitHub 上真正的密碼做最終確認，並讓本機快取的密碼保持最新
       if (pendingPassword === currentData.password) {
@@ -394,6 +423,13 @@
       { id: 'styles', title: '文字樣式設定', preview: '標題／品項／備註的字級、顏色、粗細' },
       { id: 'wheelOptions', title: '轉盤選項（今天吃什麼）',
         preview: (currentData.wheelOptions && currentData.wheelOptions.length) ? `共 ${currentData.wheelOptions.length} 項` : '（未設定）' },
+      { id: 'announcements', title: '緊急公告（彈幕通知）',
+        preview: (() => {
+          const list = currentData.announcements || [];
+          const activeCount = list.filter(a => a.active).length;
+          if (!list.length) return '（未設定）';
+          return `共 ${list.length} 則，${activeCount} 則顯示中`;
+        })() },
       { id: 'password', title: '密碼設定', preview: '修改後台登入密碼' }
     ];
     document.getElementById('menuListOther').innerHTML = otherItems.map(renderMenuItem).join('');
@@ -484,6 +520,7 @@
     if (id === 'orderLink') return '訂餐系統按鈕連結';
     if (id === 'styles') return '文字樣式設定';
     if (id === 'wheelOptions') return '轉盤選項（今天吃什麼）';
+    if (id === 'announcements') return '緊急公告（彈幕通知）';
     if (id === 'password') return '密碼設定';
     return '';
   }
@@ -568,11 +605,15 @@
     if (id === 'wheelOptions'){
       const list = (currentData.wheelOptions || []).join('\n');
       return `
-        <label for="f_wheelOptions">每一行請列為一個轉盤選項，首頁的轉盤將依此清單顯示。</label>
+        <label for="f_wheelOptions">每一行請列為一個轉盤選項，首頁的轉盤將依此清單顯示（建議 3～10 項，太多項文字會擁擠）。</label>
         <textarea id="f_wheelOptions" placeholder="例如：\n八方雲集\n竹美港式燒臘\n麥當勞">${escapeHtml(list)}</textarea>
         <button class="btn-secondary" id="importFromMenuBtn" style="margin-top:14px">從本週菜單匯入中餐品項</button>
         <div class="hint">匯入會把本週五天中餐（不重複、忽略未設定）加入清單，已存在的品項不會重複加入。</div>
         <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
+    }
+    if (id === 'announcements'){
+      workingAnnouncements = (currentData.announcements || []).map(a => ({ ...a }));
+      return announcementsBodyHtml();
     }
     if (id === 'password'){
       return `
@@ -659,6 +700,8 @@
         });
         ta.value = existing.join('\n');
       };
+    } else if (id === 'announcements'){
+      wireAnnouncementsEditor();
     } else if (id === 'password'){
       document.getElementById('applyPwBtn').onclick = () => {
         const cur = document.getElementById('f_curPw').value;
@@ -680,6 +723,71 @@
         document.getElementById('f_newPw2').value = '';
       };
     }
+  }
+
+  // ---------- announcements (danmaku) editor ----------
+  let workingAnnouncements = [];
+
+  function announcementsBodyHtml(){
+    const rows = workingAnnouncements.map((a, i) => `
+      <div class="ann-row">
+        <textarea class="ann-text" data-idx="${i}" placeholder="請輸入公告內容，例如：因園區停電，今日餐點暫停配送">${escapeHtml(a.text)}</textarea>
+        <div class="ann-row-actions">
+          <label class="ann-toggle">
+            <input type="checkbox" class="ann-active" data-idx="${i}" ${a.active ? 'checked' : ''}>
+            顯示中（取消勾選＝關閉此則）
+          </label>
+          <button type="button" class="ann-delete" data-idx="${i}">刪除</button>
+        </div>
+      </div>`).join('');
+    return `
+      <div class="hint" style="margin-top:0">緊急公告會以彈幕（跑馬燈）形式顯示在首頁最上方，使用者可自行按右上角 ✕ 關閉當次顯示。可新增多則、個別開關、編輯或刪除。</div>
+      <div id="annList">${rows || '<div class="ann-empty">目前尚無公告，請按下方新增一則。</div>'}</div>
+      <button class="btn-secondary" id="addAnnBtn" type="button" style="margin-top:14px">＋ 新增一則公告</button>
+      <button class="btn-primary" id="applyBtn">儲存並返回選單</button>`;
+  }
+
+  function syncAnnouncementsFromDom(){
+    document.querySelectorAll('.ann-text').forEach(t => {
+      const i = parseInt(t.dataset.idx, 10);
+      if (workingAnnouncements[i]) workingAnnouncements[i].text = t.value;
+    });
+    document.querySelectorAll('.ann-active').forEach(c => {
+      const i = parseInt(c.dataset.idx, 10);
+      if (workingAnnouncements[i]) workingAnnouncements[i].active = c.checked;
+    });
+  }
+
+  function refreshAnnouncementsBody(){
+    syncAnnouncementsFromDom();
+    document.getElementById('itemBody').innerHTML = announcementsBodyHtml();
+    wireAnnouncementsEditor();
+  }
+
+  function wireAnnouncementsEditor(){
+    document.getElementById('addAnnBtn').onclick = () => {
+      syncAnnouncementsFromDom();
+      workingAnnouncements.push({
+        id: 'ann_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+        text: '', active: true, createdAt: new Date().toISOString()
+      });
+      refreshAnnouncementsBody();
+    };
+    document.querySelectorAll('.ann-delete').forEach(btn => {
+      btn.onclick = () => {
+        syncAnnouncementsFromDom();
+        const i = parseInt(btn.dataset.idx, 10);
+        workingAnnouncements.splice(i, 1);
+        refreshAnnouncementsBody();
+      };
+    });
+    document.getElementById('applyBtn').onclick = () => {
+      syncAnnouncementsFromDom();
+      currentData.announcements = workingAnnouncements
+        .filter(a => (a.text || '').trim())
+        .map(a => ({ ...a, text: a.text.trim() }));
+      showMenu();
+    };
   }
 </script>
 

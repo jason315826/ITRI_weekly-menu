@@ -1,5 +1,5 @@
 {
-  "weekStart": "2026-09-07",
+  "weekStart": "2026-08-31",
   "notes": [
     "（一）、重置菜單內容為每週五的下班時間，如果您有推薦的餐食，請在Teams留言。",
     "（二）、實際品項請以當日Teams呷奔群組公告為主，不定時有下午茶訂購，若有問題請在群組留言。",
@@ -7,45 +7,47 @@
     "（四）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（五）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-04T11:09:06.142Z",
+  "lastUpdated": "2026-09-02T07:38:19.127Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
-      "lunch": "暫停一天",
-      "lunchLink": "",
-      "drink": "暫停一天",
+      "lunch": "八方雲集",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260831-2UOZZW",
+      "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "八廚職人便當",
+      "lunch": "竹美港式燒臘",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260831-CFNN6N",
+      "drink": "",
+      "drinkLink": ""
+    },
+    {
+      "lunch": "麥當勞",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "全家便利商店",
-      "lunchLink": "",
-      "drink": "",
-      "drinkLink": ""
+      "lunch": "上野烤肉飯",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260902-N1C6IX",
+      "drink": "大茗本位製茶堂",
+      "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260902-DSUG33"
     },
     {
-      "lunch": "摩斯漢堡",
-      "lunchLink": "",
-      "drink": "",
-      "drinkLink": ""
-    },
-    {
-      "lunch": "三顧茅廬",
+      "lunch": "有飯時光(健康餐盒)",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
     }
   ],
   "wheelOptions": [
-    "八廚職人便當",
-    "好味雞肉",
-    "好鄉米精緻餐盒",
-    "三顧茅廬"
+    "八方雲集",
+    "竹美港式燒臘",
+    "麥當勞",
+    "上野烤肉飯",
+    "有飯時光(健康餐盒)"
   ],
+  "announcements": [],
   "password": "itri18899"
 }

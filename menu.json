@@ -7,7 +7,7 @@
     "（四）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（五）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-02T07:38:19.127Z",
+  "lastUpdated": "2026-09-04T00:08:35.709Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
@@ -35,8 +35,8 @@
       "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260902-DSUG33"
     },
     {
-      "lunch": "有飯時光(健康餐盒)",
-      "lunchLink": "",
+      "lunch": "有飯時光",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20260903-PE45J6",
       "drink": "",
       "drinkLink": ""
     }

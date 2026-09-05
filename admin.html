@@ -798,6 +798,10 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
+    // 中文輸入法（注音／拼音）按 Enter 確認候選字時也會觸發這個事件，
+    // 若在組字過程中呼叫 preventDefault 會打斷輸入法，造成畫面跳動，
+    // 所以組字中（isComposing）一律不處理。keyCode 229 是舊版瀏覽器的組字中標記。
+    if (e.isComposing || e.keyCode === 229) return;
     const el = e.target;
     if (!el || el.tagName !== 'INPUT') return;
     if (el.type === 'checkbox' || el.type === 'radio' || el.type === 'button') return;

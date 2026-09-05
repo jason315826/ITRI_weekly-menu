@@ -793,11 +793,15 @@
   // ---------- Enter 鍵 = 下一步 ----------
   // 任何單行輸入框（不含 textarea，因為換行需要用到 Enter）按下 Enter：
   // 若同一面板內還有下一個輸入框，就移動焦點過去；若已經是最後一個，就觸發該面板的主要按鈕。
+  // 「品項」與「超連結」欄位不套用 Enter=下一步（讓 Enter 在這些欄位內不做任何跳轉/送出動作）
+  const ENTER_EXCLUDED_IDS = ['f_lunch', 'f_lunchLink', 'f_drink', 'f_drinkLink'];
+
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     const el = e.target;
     if (!el || el.tagName !== 'INPUT') return;
     if (el.type === 'checkbox' || el.type === 'radio' || el.type === 'button') return;
+    if (ENTER_EXCLUDED_IDS.includes(el.id)) return;
 
     e.preventDefault();
 

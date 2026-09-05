@@ -6,13 +6,13 @@
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-04T12:10:00.784Z",
+  "lastUpdated": "2026-09-05T05:00:42.561Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
-      "lunch": "",
+      "lunch": "暫停一天",
       "lunchLink": "",
-      "drink": "",
+      "drink": "暫停一天",
       "drinkLink": ""
     },
     {

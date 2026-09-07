@@ -6,14 +6,14 @@
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-09-05T05:12:51.217Z",
+  "lastUpdated": "2026-09-07T01:17:47.173Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
       "lunch": "暫停一天",
       "lunchLink": "",
-      "drink": "暫停一天",
-      "drinkLink": ""
+      "drink": "五十嵐",
+      "drinkLink": "https://tomokarin.github.io/Order-System/#/order/20260907-MSJWC8"
     },
     {
       "lunch": "八廚職人便當",
@@ -44,7 +44,7 @@
   "announcements": [
     {
       "id": "ann_mtmw1rpfmn36",
-      "text": "特別通知：\n9/7（一）中餐及下午茶團購暫停一天\n造成您的不便，敬請見諒。",
+      "text": "特別通知：\n9/7（一）中餐購暫停一天\n造成您的不便，敬請見諒。",
       "active": true,
       "createdAt": "2026-09-04T11:46:24.003Z"
     }

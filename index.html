@@ -2,8 +2,19 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>呷奔 | 一週菜單</title>
+
+<!-- PWA：加入主畫面 -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#5B2A46">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="呷奔">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <script>
   // 在畫面渲染前先套用已儲存的主題設定，避免閃爍。預設為淺色模式。
   (function(){
@@ -818,6 +829,15 @@
   wheelClose.addEventListener('click', closeWheel);
   wheelOverlay.addEventListener('click', (e) => { if (e.target === wheelOverlay) closeWheel(); });
   wheelSpinBtn.addEventListener('click', spinWheel);
+
+  // ---------- PWA：註冊 Service Worker（離線快取） ----------
+  if ('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {
+        // 註冊失敗（例如不支援）就安靜略過，不影響一般瀏覽功能。
+      });
+    });
+  }
 </script>
 
 </body>

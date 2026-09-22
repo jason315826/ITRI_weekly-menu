@@ -568,69 +568,145 @@
     return `<span class="item-value">${safeText}</span>`;
   }
 
-  async function loadMenu(){
+  // ---------- 即時更新：定時在背景重新抓取 menu.json ----------
+  // 只要偵測到 lastUpdated（或整份內容）有變化，就自動重新渲染畫面，
+  // 不需要使用者手動整理頁面。
+  const LIVE_UPDATE_INTERVAL_MS = 5000; // 每 5 秒背景檢查一次
+  let lastMenuSignature = null;   // 記錄目前畫面對應的資料版本（優先用 lastUpdated，沒有的話退回整份 JSON 字串）
+  let isCheckingForUpdates = false;
+
+  function renderMenu(data){
+    applyStyles(data.styles);
+    const today = new Date();
+
+    const dates = [0,1,2,3,4].map(i => addDays(data.weekStart, i));
+    const mon = dates[0], fri = dates[4];
+    document.getElementById('dateRange').textContent =
+      `${mon.getMonth()+1} 月 ${mon.getDate()} 日（一）— ${fri.getMonth()+1} 月 ${fri.getDate()} 日（五）`;
+
+    const deck = document.getElementById('deck');
+    deck.innerHTML = data.days.map((d, i) => {
+      const dt = dates[i];
+      const meta = DAY_META[i];
+      const isToday = isSameDate(dt, today);
+      return `
+      <div class="day-card${isToday ? ' is-today' : ''}">
+        <div class="num">${meta.num}</div>
+        <div class="day-name">${meta.name}</div>
+        <div class="day-date">${pad2(dt.getMonth()+1)}/${pad2(dt.getDate())}</div>
+        <div class="item">
+          <svg class="icon"><use href="#icon-bowl"/></svg>
+          <div class="item-body">
+            <div class="item-label">中餐</div>
+            ${itemValueHtml(d.lunch, d.lunchLink)}
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="item">
+          <svg class="icon"><use href="#icon-cup"/></svg>
+          <div class="item-body">
+            <div class="item-label">下午茶</div>
+            ${itemValueHtml(d.drink, d.drinkLink)}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    if (data.notes && data.notes.length){
+      document.getElementById('notesList').innerHTML =
+        data.notes.map(n => `<li>${n}</li>`).join('');
+      document.getElementById('notesBlock').style.display = 'block';
+    } else {
+      document.getElementById('notesBlock').style.display = 'none';
+    }
+
+    if (data.lastUpdated){
+      document.getElementById('footerMeta').textContent = '最後更新：' + formatLastUpdated(data.lastUpdated);
+    }
+
+    if (data.orderLink && data.orderLink.trim()){
+      const fab = document.getElementById('orderFab');
+      fab.href = data.orderLink;
+      fab.style.display = 'inline-flex';
+    }
+
+    const newWheelOptions = Array.isArray(data.wheelOptions) ? data.wheelOptions.filter(s => (s || '').trim()) : [];
+    const wheelChanged = JSON.stringify(newWheelOptions) !== JSON.stringify(wheelOptions);
+    wheelOptions = newWheelOptions;
+    if (wheelChanged){
+      // 轉盤內容變了：標記需要重畫。若使用者正在轉（動畫進行中）先不打斷，等下次開啟自然重畫；
+      // 若轉盤視窗目前是開著但沒在轉，直接重畫讓使用者立刻看到最新選項。
+      wheelDrawn = false;
+      if (wheelOverlay.classList.contains('open') && !wheelSpinning){
+        drawWheel();
+        wheelDrawn = true;
+      }
+    }
+
+    renderAnnouncements(Array.isArray(data.announcements) ? data.announcements : []);
+  }
+
+  function showLiveUpdateToast(){
+    let toast = document.getElementById('liveUpdateToast');
+    if (!toast){
+      toast = document.createElement('div');
+      toast.id = 'liveUpdateToast';
+      toast.textContent = '菜單已更新';
+      toast.style.cssText = `
+        position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(12px);
+        background: var(--accent-bg); color: var(--accent-text);
+        font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
+        padding: 10px 20px; border-radius: 999px; z-index: 200;
+        box-shadow: 0 10px 24px rgba(43,23,40,0.32);
+        opacity: 0; transition: opacity .35s ease, transform .35s ease;
+        pointer-events: none;
+      `;
+      document.body.appendChild(toast);
+    }
+    // 重新觸發淡入淡出動畫
+    clearTimeout(toast._hideTimer);
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    toast._hideTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(12px)';
+    }, 2600);
+  }
+
+  async function loadMenu(isBackgroundCheck){
+    if (isCheckingForUpdates) return;
+    isCheckingForUpdates = true;
     try{
       const res = await fetch('menu.json?_=' + Date.now());
       const data = await res.json();
-      applyStyles(data.styles);
-      const today = new Date();
+      const signature = data.lastUpdated || JSON.stringify(data);
 
-      const dates = [0,1,2,3,4].map(i => addDays(data.weekStart, i));
-      const mon = dates[0], fri = dates[4];
-      document.getElementById('dateRange').textContent =
-        `${mon.getMonth()+1} 月 ${mon.getDate()} 日（一）— ${fri.getMonth()+1} 月 ${fri.getDate()} 日（五）`;
-
-      const deck = document.getElementById('deck');
-      deck.innerHTML = data.days.map((d, i) => {
-        const dt = dates[i];
-        const meta = DAY_META[i];
-        const isToday = isSameDate(dt, today);
-        return `
-        <div class="day-card${isToday ? ' is-today' : ''}">
-          <div class="num">${meta.num}</div>
-          <div class="day-name">${meta.name}</div>
-          <div class="day-date">${pad2(dt.getMonth()+1)}/${pad2(dt.getDate())}</div>
-          <div class="item">
-            <svg class="icon"><use href="#icon-bowl"/></svg>
-            <div class="item-body">
-              <div class="item-label">中餐</div>
-              ${itemValueHtml(d.lunch, d.lunchLink)}
-            </div>
-          </div>
-          <div class="divider"></div>
-          <div class="item">
-            <svg class="icon"><use href="#icon-cup"/></svg>
-            <div class="item-body">
-              <div class="item-label">下午茶</div>
-              ${itemValueHtml(d.drink, d.drinkLink)}
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-
-      if (data.notes && data.notes.length){
-        document.getElementById('notesList').innerHTML =
-          data.notes.map(n => `<li>${n}</li>`).join('');
-        document.getElementById('notesBlock').style.display = 'block';
+      if (isBackgroundCheck){
+        if (signature === lastMenuSignature) return; // 資料沒變，不重新渲染
+        renderMenu(data);
+        showLiveUpdateToast();
+      } else {
+        renderMenu(data);
       }
-
-      if (data.lastUpdated){
-        document.getElementById('footerMeta').textContent = '最後更新：' + formatLastUpdated(data.lastUpdated);
-      }
-
-      if (data.orderLink && data.orderLink.trim()){
-        const fab = document.getElementById('orderFab');
-        fab.href = data.orderLink;
-        fab.style.display = 'inline-flex';
-      }
-
-      wheelOptions = Array.isArray(data.wheelOptions) ? data.wheelOptions.filter(s => (s || '').trim()) : [];
-      renderAnnouncements(Array.isArray(data.announcements) ? data.announcements : []);
+      lastMenuSignature = signature;
     }catch(err){
-      document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗,請稍後再試</div>';
+      if (!isBackgroundCheck){
+        document.getElementById('deck').innerHTML = '<div class="loading">菜單讀取失敗，請稍後再試</div>';
+      }
+      // 背景檢查失敗（例如暫時斷線）就安靜略過，下一次輪詢再試即可，避免打斷使用者畫面。
+    } finally {
+      isCheckingForUpdates = false;
     }
   }
-  loadMenu();
+  loadMenu(false);
+
+  setInterval(() => loadMenu(true), LIVE_UPDATE_INTERVAL_MS);
+  // 使用者切回分頁時立刻檢查一次，比等待下個輪詢週期更即時。
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') loadMenu(true);
+  });
 
   // ---------- 緊急公告（置中彈窗） ----------
   function escapeHtmlBasic(s){

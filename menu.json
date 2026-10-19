@@ -6,12 +6,12 @@
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-10-19T02:21:17.809Z",
+  "lastUpdated": "2026-10-19T02:34:34.144Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
-      "lunch": "",
-      "lunchLink": "",
+      "lunch": "英豪食廚房",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20261019-35MEUY",
       "drink": "",
       "drinkLink": ""
     },

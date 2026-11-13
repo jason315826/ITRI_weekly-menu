@@ -1,34 +1,34 @@
 {
-  "weekStart": "2026-11-09",
+  "weekStart": "2026-11-16",
   "notes": [
     "（一）、實際品項請以當日Teams呷奔群組公告為主，不定時有下午茶訂購，若有問題請在群組留言。",
     "（二）、請依規定時間於訂餐系統完成訂餐，逾時恕不受理，敬請配合，謝謝。",
     "（三）、如需修改或取消訂單，請於訂餐截止時間前完成。",
     "（四）、請依公告時間至51館201室(18899)取餐，避免餐點久置影響餐食品質。"
   ],
-  "lastUpdated": "2026-11-09T09:07:37.570Z",
+  "lastUpdated": "2026-11-13T08:24:18.791Z",
   "orderLink": "https://tomokarin.github.io/Order-System/#/",
   "days": [
     {
-      "lunch": "上野烤肉飯",
-      "lunchLink": "",
-      "drink": "可不可熟成紅茶",
+      "lunch": "健人餐盒",
+      "lunchLink": "https://tomokarin.github.io/Order-System/#/order/20261113-O5DM73",
+      "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "鴻鼎魚酥",
+      "lunch": "",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "吳家甜不辣",
+      "lunch": "",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
     },
     {
-      "lunch": "八廚 職人便當",
+      "lunch": "",
       "lunchLink": "",
       "drink": "",
       "drinkLink": ""
